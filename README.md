@@ -1,0 +1,2 @@
+# Eestikeelsete-Ristsonade-Genereerija
+Bakalaureusetöö repositoorium
