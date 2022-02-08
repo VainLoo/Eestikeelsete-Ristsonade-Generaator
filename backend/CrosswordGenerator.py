@@ -1,5 +1,7 @@
+from cmath import log
 import random
-
+import logging
+logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 import numpy as np
 import pandas as pd
 
@@ -9,6 +11,8 @@ anyChar = '[A-ZÜÖÄÕ ]|'
 data = None
 grid = None
 words = None
+allWords = []
+complete = False
 
 def getData():
     # Loeme sisse
@@ -70,6 +74,7 @@ class Words:
 
 def makeWords():
     global allWords
+    allWords = []
     global complete
     words = Words()
 
@@ -91,8 +96,9 @@ def makeWords():
             # Mark across
 
             if not current.acrossMarked:
-                if len(grid[i]) > j + 1 and grid[i][j + 1]:
+                if len(grid[i]) > j + 1:
                     if grid[i][j + 1].contents != "#":
+                        current.acrossMarked = True
                         current.acrossNumber = numberCount
 
                         for x in range(1, 100):
@@ -101,7 +107,7 @@ def makeWords():
                             except:
                                 nextCell = None
 
-                            if not nextCell or nextCell.contents == "#":
+                            if nextCell == None or nextCell.contents == "#":
                                 wordAdded = True
                                 w = Word()
 
@@ -117,13 +123,18 @@ def makeWords():
             # Mark down words
 
             if not current.downMarked:
-                if len(grid) > i + 1 and grid[i + 1][j]:
+                if len(grid) > i + 1:
                     if grid[i + 1][j].contents != "#":
+                        current.downMarked = True
                         current.downNumber = numberCount
 
-                        for x in range(100):
+                        for x in range(1, 100):
+                            try:
+                                nextCell = grid[i + x][j]
+                            except:
+                                nextCell = None
 
-                            if len(grid) <= i + x or grid[i + x][j].contents == "#":
+                            if nextCell == None or nextCell.contents == "#":
                                 wordAdded = True
 
                                 w = Word()
@@ -141,9 +152,6 @@ def makeWords():
             if wordAdded:
                 wordAdded = False
                 numberCount += 1
-
-    allWords = []
-    complete = False
 
     return words
 
@@ -174,8 +182,13 @@ def findDownWords(word: Word):
     global words
     for m in range(len(word.ref)):
         if word.ref[m].downNumber != "":
-            downWord: Word = words.down[word.ref[m].downNumber]
-
+            try:
+                downWord: Word = words.down[word.ref[m].downNumber]
+            except:
+                print(words.down)
+                print(word.ref[m])
+                raise Exception("error2")
+                
             count = 0
 
             for square in downWord.ref:
@@ -244,11 +257,18 @@ def fillRemainingDownWords():
 def createWordsAndClues():
     # Loo päringu sisu
 
-    bufferAmount = 3
     acrossWords = list(words.across.keys())
 
     for i in range(len(acrossWords)):
-        word = words.across[acrossWords[i]]
+        #print("Across I",acrossWords[i])
+        #print(words.across[acrossWords[i]])
+        try:
+            word = words.across[acrossWords[i]]
+        except:
+            print(words.across)
+            print(acrossWords)
+            raise Exception("error")
+            
         leng = len(word.ref)
         queryParams = ((anyChar * leng)[:-1]).split('|')
 
@@ -300,12 +320,12 @@ def createWordsAndClues():
 def showClues():
     print("Vasakult paremale")
     for key, acWord in words.across.items():
-        print(acWord.word, ':', acWord.clue)
+        print(key,'->', acWord.word, ':', acWord.clue)
 
     print()
     print("Ülalt alla")
     for key, doWord in words.down.items():
-        print(doWord.word, ':', doWord.clue)
+        print(key,'->', doWord.word, ':', doWord.clue)
 
 
 def getCrossword():
@@ -313,20 +333,27 @@ def getCrossword():
     global grid
     global words
     data = getData()
+    logging.info("Data gathered")
     grid = createGrid()
+    logging.info("Grid generated")
     words = makeWords()
+    logging.info("Words generated")
 
     while True:
         try:
             createWordsAndClues()
+            logging.info("Crossword generated")
             #printGrid(grid)
             return grid, words
         except FileNotFoundError:
             # print("failed")
             # printGrid(grid)
             grid = createGrid()
+            logging.info("Grid generated")
             words = makeWords()
+            logging.info("Words generated")
         except ValueError:
+            logging.info("ValueError")
             # print("failed")
             # printGrid(grid)
             grid = createGrid()
@@ -336,27 +363,54 @@ def getCrossword():
 #printGrid(grid)
 
 def getGridList():
-    gridList = {}
+    gridList = []
 
     for index, row in enumerate(grid):
-        gridList[index] = []
-        for cell in row:
-            gridList[index].append(cell.contents)
+        gridList.append([])
+        for index2, cell in enumerate(row):
+            gridList[index].append(
+            {
+            'contents': cell.contents,
+            'acrossNumber': cell.acrossNumber,
+            'downNumber': cell.downNumber,
+            'acrossMarked': cell.acrossMarked,
+            'downMarked': cell.downMarked,
+            'cords': (index, index2)
+            })
+        #logging.info(gridList[index])
     return gridList
 
-def getClueDict():
+def getClueList():
     wordDict = {
-        "across": {},
-        "down": {}
+        'across': [],
+        'down': []
     }
 
     for key, acWord in words.across.items():
-        wordDict["across"][key] = (acWord.word, acWord.clue)
+        wordDict['across'].append(
+            {
+            'index': key,
+            'word': acWord.word,
+            'clue': acWord.clue,
+            'dir': 'across'
+            })
         #print(acWord.word, ':', acWord.clue)
 
     for key, doWord in words.down.items():
-        wordDict["down"][key] = (doWord.word, doWord.clue)
+        wordDict['down'].append({
+            'index': key,
+            'word': doWord.word,
+            'clue': doWord.clue,
+            'dir': 'down'
+            })
         #print(doWord.word, ':', doWord.clue)
+
+    wordDict['across'] = sorted(wordDict['across'], key = lambda i: i['index'])
+    wordDict['down'] = sorted(wordDict['down'], key = lambda i: i['index'])
+
     return wordDict
+
+
+#grid, words = getCrossword()
           
 
