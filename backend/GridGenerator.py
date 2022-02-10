@@ -11,6 +11,7 @@ class CellInfo:
     contents = ""
     acrossNumber = ""
     downNumber = ""
+    clueCellNumber = ""
     acrossMarked = False
     downMarked = False
     opposite = None

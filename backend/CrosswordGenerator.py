@@ -174,7 +174,11 @@ def setWord(retrivedPair, word: Word):
     splitWord = list(word.word)
     leng = len(splitWord)
 
+    acrossNumb = word.ref[0].acrossNumber
+    downNumb = word.ref[0].downNumber
     for l in range(leng):
+        if word.ref[l].acrossNumber != acrossNumb: word.ref[0].clueCellNumber = word.ref[0].downNumber
+        elif word.ref[l].downNumber != downNumb: word.ref[0].clueCellNumber = word.ref[0].acrossNumber
         word.ref[l].contents = splitWord[l]
 
 
@@ -286,7 +290,6 @@ def createWordsAndClues():
         queryParams = ''.join(map(str, queryParams))
         queryParams = '^' + queryParams + '$'
 
-        suffledWordList = []
         retrivedWordList = getNewWord(queryParams)
         retrivedWord: str = ""
 
@@ -375,7 +378,8 @@ def getGridList():
             'downNumber': cell.downNumber,
             'acrossMarked': cell.acrossMarked,
             'downMarked': cell.downMarked,
-            'cords': (index, index2)
+            'cords': (index, index2),
+            'clueNumber': cell.clueCellNumber
             })
         #logging.info(gridList[index])
     return gridList
