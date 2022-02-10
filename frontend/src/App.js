@@ -14,26 +14,36 @@ function App() {
   const [loading1, setLoading1] = useState(false);
   const [words, setWords] = useState({});
   const [grid, setGrid] = useState([]);
+  const [check, setCheck] = useState(false);
+  const [reset, setReset] = useState(false);
   const crosswordService = new CrosswordService();
 
+
   const getData = () => {
+    setWords({});
+    setGrid([]);
     setLoading1(true);
-    crosswordService.getCrossword().then(data => { setWords(data.words); setLoading1(false); setGrid(data.grid) });
+    setCheck(false);
+    setReset(true);
+    crosswordService.getCrossword().then(data => { setWords(data.words); setLoading1(false); setGrid(data.grid);});
   }
 
   return (
     <div>
       <Card title="Ristsõna">
-      <Button className='' label="Loo Ristsõna" loading={loading1} onClick={getData} />
+      <Button label="Loo Ristsõna" loading={loading1} onClick={getData} />
+      {grid.length > 0 ? <Button label="Kontrolli" onClick={() => setCheck(true)} />
+      : <Button label="Kontrolli" onClick={() => setCheck(true)} disabled />
+      }
       </Card>
       
 
       <div className='grid flex justify-content-center flex-wrap'>
-        <div className='col-6 flex align-items-start justify-content-center'>
-          <Crossword grid={grid}></Crossword>
+        <div className='col flex align-items-start justify-content-center'>
+          <Crossword check={check} grid={grid} reset={reset} setReset={setReset}></Crossword>
         </div>
         <div className='col'>
-          <Clues words={words}></Clues>
+          <Clues words={words} check={check}></Clues>
         </div>
       </div>
 
