@@ -1,6 +1,4 @@
-FROM python:3.10.2-alpine
-RUN mkdir /app
-ADD . /app
+FROM python:3.10-alpine
 WORKDIR /app
 
 # Set environment variables
@@ -12,8 +10,8 @@ RUN apk update
 RUN apk add make automake gcc g++ subversion python3-dev
 
 RUN pip3 install --no-cache-dir \
-    pandas==1.4.0 \
-    numpy==1.22.2
+    pandas \
+    numpy 
 
 # Install dependencies
 COPY requirements.txt /app/
@@ -23,4 +21,5 @@ COPY . /app/
 
 EXPOSE 8080
 
+# Run the executable
 CMD ["python", "api.py"]

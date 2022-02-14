@@ -8,7 +8,7 @@ import { Accordion, AccordionTab } from 'primereact/accordion';
 const Clues = ({ words, check }) => {
     return <div>
         <Card title="Küsimused">
-        <Accordion multiple activeIndex={[0]}>
+        <Accordion multiple activeIndex={[]}>
         <AccordionTab header="Paremale">
             <div className="card">
                     <DataTable value={words.across} size="small" responsiveLayout="scroll" >

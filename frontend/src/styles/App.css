@@ -1,3 +1,9 @@
 .p-button {
   margin-right: 0.5rem !important;
+  margin-top: 0.5rem !important;
+}
+
+.noMargin {
+  margin-right: 0rem !important;
+  margin-top: 0rem !important;
 }

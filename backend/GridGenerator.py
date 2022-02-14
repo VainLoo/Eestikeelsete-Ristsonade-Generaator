@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import random
+import math
 
-size = 10
 blackSqCount = 0
 letterCount = 0
 
@@ -27,8 +27,8 @@ def printGrid(grid, header="default"):
 
 
 def preventBlockedWhiteSquares(grid):
-    for i in range(5):
-        for j in range(10):
+    for i in range(math.floor(len(grid)/2)):
+        for j in range(len(grid[0])):
             curCell = grid[i][j]
 
             blocked = ((not curCell.above or curCell.above.contents == "#") and
@@ -68,27 +68,27 @@ def processTwoLetterWords(i: int, j: int, direction, grid):
 def eliminateTwoLetterWords(grid):
     global letterCount
     # vasakult paremale, ülevalt alla
-    for i in range(5):
+    for i in range(math.floor(len(grid)/2)):
         letterCount = 0
-        for j in range(10):
+        for j in range(len(grid[0])):
             processTwoLetterWords(i, j, "across", grid)
 
     # paremalt vasakule, alt ülesse
-    for i in range(4, -1, -1):
+    for i in range(math.floor(len(grid)/2)-1, -1, -1):
         letterCount = 0
-        for j in range(9, -1, -1):
+        for j in range(len(grid[0])-1, -1, -1):
             processTwoLetterWords(i, j, "across", grid)
 
     # Ülevalt alla, vasakult paremale
-    for j in range(10):
+    for j in range(len(grid[0])):
         letterCount = 0
-        for i in range(5):
+        for i in range(math.floor(len(grid)/2)):
             processTwoLetterWords(j, i, "down", grid)
 
     # alt ülesse, paremalt vasakule
-    for j in range(9, -1, -1):
+    for j in range(len(grid[0])-1, -1, -1):
         letterCount = 0
-        for i in range(4, -1, -1):
+        for i in range(math.floor(len(grid)/2), -1, -1):
             processTwoLetterWords(j, i, "down", grid)
 
 
@@ -143,44 +143,42 @@ def processDisjointedWords(rowCount: int, colCount: int, direction: str, grid):
                 continue
 
 
-def createGrid():
+def createGrid(length, width):
     global blackSqCount
     global letterCount
-    global size
 
-    size = 10
     blackSqCount = 0
     letterCount = 0
 
-    grid = np.empty(size, dtype=object)
+    grid = np.empty(length, dtype=object)
 
-    for i in range(size):
-        grid[i] = np.empty(size, dtype=CellInfo)
+    for i in range(length):
+        grid[i] = np.empty(width, dtype=CellInfo)
 
-    for i in range(size):
-        for j in range(size):
+    for i in range(length):
+        for j in range(width):
             grid[i][j] = CellInfo()
 
-    for i in range(size):
-        for j in range(size):
-            grid[i][j].opposite = grid[size - 1 - i][size - 1 - j]
+    for i in range(length):
+        for j in range(width):
+            grid[i][j].opposite = grid[length - 1 - i][width - 1 - j]
             grid[i][j].above = grid[i - 1][j] if i > 0 else False
-            grid[i][j].below = grid[i + 1][j] if i < 9 else False
+            grid[i][j].below = grid[i + 1][j] if i < length-1 else False
             grid[i][j].prev = grid[i][j - 1] if j > 0 else False
-            grid[i][j].next = grid[i][j + 1] if j < 9 else False
+            grid[i][j].next = grid[i][j + 1] if j < width-1 else False
 
-    while blackSqCount < 80:
-        for i in range(5):
-            for j in range(10):
+    while blackSqCount < (length*width*0.8):
+        for i in range(math.floor(length/2)):
+            for j in range(width):
                 rand = random.random()
                 # print("random:", rand)
                 if rand < 0.7:
                     grid[i][j].contents = "#"
-                    grid[size - 1 - i][size - 1 - j].contents = "#"
+                    grid[length - 1 - i][width - 1 - j].contents = "#"
 
                     blackSqCount += 2
 
-                    if blackSqCount > 79:
+                    if blackSqCount > (length*width*0.8)-1:
                         break
 
     #printGrid(grid, "first grid")
@@ -191,8 +189,8 @@ def createGrid():
     #printGrid(grid, "Eliminate Two letter words")
 
     # Reduce large blocks of white spaces
-    for i in range(1, 5):
-        for j in range(1, 9):
+    for i in range(1, math.floor(length/2)-1):
+        for j in range(1, width-1):
             curCell: CellInfo = grid[i][j]
 
             nineSquare = [
@@ -219,8 +217,8 @@ def createGrid():
     preventBlockedWhiteSquares(grid)
     #printGrid(grid, "Prevent Blocked White Squares")
 
-    processDisjointedWords(5, 10, "across", grid)
-    processDisjointedWords(10, 5, "down", grid)
+    processDisjointedWords(math.floor(length/2), width, "across", grid)
+    processDisjointedWords(length, math.floor(width/2), "down", grid)
     #printGrid(grid, "Process Disjointed Words")
 
     eliminateTwoLetterWords(grid)

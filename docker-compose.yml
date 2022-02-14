@@ -9,7 +9,7 @@ services:
   app:
     # Configuration for building the docker image for the service
     build:
-      context: ./frontend # Use an image built from the specified dockerfile in the current directory.
+      context: ./backend # Use an image built from the specified dockerfile in the current directory.
       dockerfile: Dockerfile
     ports:
       - "8080:8080" # Forward the exposed port 8080 on the container to port 8080 on the host machine
@@ -33,7 +33,7 @@ services:
   dev:
     container_name: dev
     build:
-      context: ./backend
+      context: ./frontend
       dockerfile: Dockerfile
     volumes:
       - '.:/app'

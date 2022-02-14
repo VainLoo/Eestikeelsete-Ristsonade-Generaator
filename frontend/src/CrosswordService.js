@@ -1,7 +1,7 @@
 export class CrosswordService {
 
-    getCrossword() {
-        return fetch("http://localhost:8080/")
+    getCrossword(length, width) {
+        return fetch("http://localhost:8080/?width="+width+"&length="+length)
         .then(res => res.json());
     }
 }

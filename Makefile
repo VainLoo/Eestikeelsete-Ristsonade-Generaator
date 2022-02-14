@@ -1,28 +1,15 @@
-front-prod-build:
-	$(MAKE) -C frontend prod-build
 
-front-up:
-	$(MAKE) -C frontend front-up
+front:
+	$(MAKE) -C frontend dev
 
-front-prod-up:
-	$(MAKE) -C frontend front-prod-up
+back:
+	$(MAKE) -C backend dev
 
-front-stop:
-	$(MAKE) -C frontend front-stop
+stop:
+	docker-compose stop
 
-back-up:
-	$(MAKE) -C backend back-up
-
-back-stop:
-	$(MAKE) -C backend back-stop
-
-all-up:
-	make front-up
-	make back-up
-	
-all-stop:
-	make back-stop
-	make front-stop
-
-make build:
+build:
 	docker-compose up -d --build
+
+deploy:
+	docker-compose up

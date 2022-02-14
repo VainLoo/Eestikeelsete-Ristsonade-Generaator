@@ -1,8 +1,8 @@
 from cmath import log
-import re
 import flask
 import redis
 import os
+from flask import request
 
 from CrosswordGenerator import getClueList, getCrossword, getGridList
 from GridGenerator import printGrid
@@ -14,8 +14,10 @@ app.config["DEBUG"] = True
 
 @app.route('/', methods=['GET'])
 def home():
+    width = request.args.get('width', default=10, type = int)
+    length = request.args.get('length', default=10, type = int)
     logging.info("Starting generation")
-    grid, words = getCrossword()
+    grid, words = getCrossword(length, width)
     words = getClueList()
     logging.info("word list made")
     grid = getGridList()

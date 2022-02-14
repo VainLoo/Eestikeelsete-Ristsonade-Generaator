@@ -72,7 +72,7 @@ class Words:
             self.down = {}
 
 
-def makeWords():
+def makeWords(length, width):
     global allWords
     allWords = []
     global complete
@@ -80,10 +80,10 @@ def makeWords():
 
     numberCount = 1
 
-    for i in range(10):
+    for i in range(length):
         wordAdded = False
 
-        for j in range(10):
+        for j in range(width):
             current: CellInfo = grid[i][j]
 
             if current.contents == "#":
@@ -331,36 +331,27 @@ def showClues():
         print(key,'->', doWord.word, ':', doWord.clue)
 
 
-def getCrossword():
+def getCrossword(length, width):
     global data
     global grid
     global words
     data = getData()
     logging.info("Data gathered")
-    grid = createGrid()
-    logging.info("Grid generated")
-    words = makeWords()
-    logging.info("Words generated")
 
     while True:
         try:
+            grid = createGrid(length, width)
+            logging.info("Grid generated")
+            words = makeWords(length, width)
+            logging.info("Words generated")
             createWordsAndClues()
             logging.info("Crossword generated")
             #printGrid(grid)
             return grid, words
         except FileNotFoundError:
-            # print("failed")
-            # printGrid(grid)
-            grid = createGrid()
-            logging.info("Grid generated")
-            words = makeWords()
-            logging.info("Words generated")
+            logging.info("Trying again")
         except ValueError:
             logging.info("ValueError")
-            # print("failed")
-            # printGrid(grid)
-            grid = createGrid()
-            words = makeWords()
 
 #grid, words = getCrossword()
 #printGrid(grid)
