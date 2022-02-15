@@ -5,7 +5,7 @@ logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 import numpy as np
 import pandas as pd
 
-from GridGenerator import CellInfo, createGrid, printGrid
+from server.main.GridGenerator import CellInfo, createGrid, printGrid
 
 anyChar = '[A-ZÜÖÄÕ ]|'
 data = None
@@ -16,7 +16,7 @@ complete = False
 
 def getData():
     # Loeme sisse
-    data = pd.read_json('defs.jl', lines=True)
+    data = pd.read_json('server/main/defs.jl', lines=True)
     # Kaotame definitsioonide duplikaadid
     data.drop_duplicates('def', inplace=True)
     # Kõik suureks
@@ -332,6 +332,7 @@ def showClues():
 
 
 def getCrossword(length, width):
+    logging.info("Starting generation")
     global data
     global grid
     global words

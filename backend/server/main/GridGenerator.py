@@ -92,35 +92,31 @@ def eliminateTwoLetterWords(grid):
             processTwoLetterWords(j, i, "down", grid)
 
 
-def processDisjointedWords(rowCount: int, colCount: int, direction: str, grid):
-    for i in range(rowCount):
-        for j in range(colCount):
-            if direction == "across":
-                if i >= rowCount:
-                    break
-            else:
-                if j >= rowCount:
+def processDisjointedWordsDown(rowCount: int, colCount: int, grid):
+    for i in range(colCount):
+        for j in range(rowCount):
+
+            if j >= rowCount:
                     break
 
-            curCell: CellInfo = grid[i][j] if direction == "across" else grid[j][i]
+            curCell: CellInfo = grid[j][i]
             if curCell.contents != "#":
                 count = 1
                 disconnected = 0
                 checking = True
                 blackSquareArr = []
 
-                while (checking and j < colCount):
+                while (checking and j < rowCount):
                     currentGridItem = None
                     nextGridItem = None
                     try:
-                        currentGridItem = grid[i][j + (count - 1)] if direction == "across" else \
-                            grid[j + (count - 1)][i]
-                        nextGridItem = grid[i][j + count] if direction == "across" else grid[j + count][i]
+                        currentGridItem = grid[j + (count - 1)][i]
+                        nextGridItem = grid[j + count][i]
                     except:
                         nextGridItem = None
 
-                    a = currentGridItem.above if direction == "across" else currentGridItem.prev
-                    b = currentGridItem.below if direction == "across" else currentGridItem.next
+                    a = currentGridItem.prev
+                    b = currentGridItem.next
 
                     if nextGridItem is not None and nextGridItem.contents != "#":
                         count += 1
@@ -142,6 +138,53 @@ def processDisjointedWords(rowCount: int, colCount: int, direction: str, grid):
             else:
                 continue
 
+
+def processDisjointedWordsAcross(rowCount: int, colCount: int, grid):
+    for i in range(rowCount):
+        for j in range(colCount):
+
+            if i >= rowCount:
+                break
+
+            curCell: CellInfo = grid[i][j]
+
+            if curCell.contents != "#":
+                count = 1
+                disconnected = 0
+                checking = True
+                blackSquareArr = []
+
+                while (checking and j < colCount):
+                    currentGridItem = None
+                    nextGridItem = None
+                    try:
+                        currentGridItem = grid[i][j + (count - 1)]
+                        nextGridItem = grid[i][j + count]
+                    except:
+                        nextGridItem = None
+
+                    a = currentGridItem.above
+                    b = currentGridItem.below
+
+                    if nextGridItem is not None and nextGridItem.contents != "#":
+                        count += 1
+                    else:
+                        checking = False
+
+                    if (not a or a.contents == "#") and (not b or b.contents == "#"):
+                        disconnected += 1
+                        if a:
+                            blackSquareArr.append(a)
+                        if b:
+                            blackSquareArr.append(b)
+
+                if disconnected == count and count > 1:
+                    targetSquare: CellInfo = blackSquareArr[random.randint(0, len(blackSquareArr) - 1)]
+                    targetSquare.contents = ""
+                    targetSquare.opposite.contents = ""
+                j += count
+            else:
+                continue
 
 def createGrid(length, width):
     global blackSqCount
@@ -217,8 +260,8 @@ def createGrid(length, width):
     preventBlockedWhiteSquares(grid)
     #printGrid(grid, "Prevent Blocked White Squares")
 
-    processDisjointedWords(math.floor(length/2), width, "across", grid)
-    processDisjointedWords(length, math.floor(width/2), "down", grid)
+    processDisjointedWordsAcross(math.floor(length/2), width, grid)
+    processDisjointedWordsDown(length, math.floor(width/2), grid)
     #printGrid(grid, "Process Disjointed Words")
 
     eliminateTwoLetterWords(grid)
