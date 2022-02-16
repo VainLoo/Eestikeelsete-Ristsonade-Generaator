@@ -1,29 +1,44 @@
-
 from server.main.rq_helpers import queue
-from flask import render_template, Blueprint, jsonify, request, current_app, redirect
-from server.main.CrosswordGenerator import getCrossword, getClueList, getGridList
+from flask import Blueprint, jsonify, request
 from server.main import jobs
 import logging
 
 main_blueprint = Blueprint("main", __name__, template_folder='templates')
 
 
-@main_blueprint.route("/", methods=["GET"])
+@main_blueprint.route("/", methods=["POST"])
 def home():
     width = request.args.get('width', default=10, type = int)
     length = request.args.get('length', default=10, type = int)
-    queue.enqueue(jobs.crossword, width, length, on_success=report_success, on_failure=report_failure)
+    job = jobs.crossword.delay(width, length)
+    response_object = jsonify({
+        "status": "success",
+        "data": {
+            "job_id": job.get_id()
+        }
+    })
+    response_object.headers.add('Access-Control-Allow-Origin', '*')
+    return response_object, 202
 
-    #print('\n'.join([''.join(['{:4}'.format(str(item['acrossNumber'])+ '|' +str(item['downNumber'])) for item in row]) for row in grid]))
 
 
-def report_success(job, connection, result, *args, **kwargs):
-    response = jsonify({'words':result[0], 'grid': result[1]})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    logging.info("SUCCESS")
-    return response, 200
+@main_blueprint.route("/jobs/<job_id>", methods=["GET"])
+def get_status(job_id):
+    job = queue.fetch_job(job_id)
+    if job:
+        response_object = {
+            "status": "success",
+            "data": {
+                "job_id": job.get_id(),
+                "job_status": job.get_status(),
+                "job_result": job.result,
+            },
+        }
+        status_code = 200
+    else:
+        response_object = {"status": "error"}
+        status_code = 500
 
-
-def report_failure(job, connection, type, value, traceback):
-    logging.info("FAILURE")
-    return {'words': {}, 'grid': []}, 400
+    response_object = jsonify(response_object)
+    response_object.headers.add('Access-Control-Allow-Origin', '*')
+    return response_object, status_code

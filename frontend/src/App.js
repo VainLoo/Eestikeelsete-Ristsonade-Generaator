@@ -1,8 +1,6 @@
 import './styles/App.css';
 import Crossword from './components/crossword'
-import React, { useState } from 'react';
-//import { DataTable } from 'primereact/datatable';
-//import { Column } from 'primereact/column';
+import React, { useState, useEffect } from 'react';
 import { CrosswordService } from './CrosswordService';
 import { Button } from 'primereact/button';
 import Clues from './components/clues';
@@ -19,7 +17,17 @@ function App() {
   const [reset, setReset] = useState(false);
   const [sizeWidth, setWitdh] = useState(10);
   const [sizeLength, setLength] = useState(10);
-  const crosswordService = new CrosswordService();
+  const [response, setResponse] = useState()
+  const crosswordService = new CrosswordService(setResponse);
+
+  useEffect(() => {
+    if (response) {
+      console.log(response);
+      setWords(response.data.job_result.words);
+      setLoading1(false);
+      setGrid(response.data.job_result.grid);
+    }
+  }, [response])
 
 
   const getData = () => {
@@ -28,8 +36,11 @@ function App() {
     setLoading1(true);
     setCheck(false);
     setReset(true);
-    crosswordService.getCrossword(sizeLength, sizeWidth).then(data => { setWords(data.words); setLoading1(false); setGrid(data.grid); });
+    crosswordService.postCrossword(sizeLength, sizeWidth).then(res => {
+      crosswordService.getStatus(res.data.job_id)
+    });
   }
+
 
   return (
     <div>
@@ -70,13 +81,3 @@ function App() {
 }
 
 export default App;
-{/*
-        <div className="card">
-            <DataTable value={words.across} responsiveLayout="scroll">
-                <Column field="index" header="Index"></Column>
-                <Column field="word" header="Word"></Column>
-                <Column field="clue" header="Clue"></Column>
-                <Column field="dir" header="Direction"></Column>
-            </DataTable>
-        </div>
-        */}

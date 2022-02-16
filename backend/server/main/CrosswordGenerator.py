@@ -346,16 +346,12 @@ def getCrossword(length, width):
             words = makeWords(length, width)
             logging.info("Words generated")
             createWordsAndClues()
-            logging.info("Crossword generated")
-            #printGrid(grid)
             return grid, words
         except FileNotFoundError:
             logging.info("Trying again")
         except ValueError:
             logging.info("ValueError")
 
-#grid, words = getCrossword()
-#printGrid(grid)
 
 def getGridList():
     gridList = []
@@ -390,7 +386,7 @@ def getClueList():
             'clue': acWord.clue,
             'dir': 'across'
             })
-        #print(acWord.word, ':', acWord.clue)
+        
 
     for key, doWord in words.down.items():
         wordDict['down'].append({
@@ -399,7 +395,7 @@ def getClueList():
             'clue': doWord.clue,
             'dir': 'down'
             })
-        #print(doWord.word, ':', doWord.clue)
+        
 
     wordDict['across'] = sorted(wordDict['across'], key = lambda i: i['index'])
     wordDict['down'] = sorted(wordDict['down'], key = lambda i: i['index'])
@@ -407,6 +403,6 @@ def getClueList():
     return wordDict
 
 
-#grid, words = getCrossword()
+
           
 

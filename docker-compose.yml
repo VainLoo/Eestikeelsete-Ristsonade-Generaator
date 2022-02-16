@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   server:
@@ -16,12 +16,11 @@ services:
       - redis
     command: rq worker --name worker --url redis://redis:6379/0
 
-# uncomment to have a another worker
-#  worker2:
-#    image: master-image
-#    depends_on:
-#      - redis
-#    command: rqworker --name worker2 --url redis://redis:6379/0
+  worker2:
+    image: master-image
+    depends_on:
+      - redis
+    command: rqworker --name worker2 --url redis://redis:6379/0
 
   dashboard:
     image: master-image
@@ -35,8 +34,8 @@ services:
     image: redis
 
     # Frontend Service
-  dev:
-    container_name: dev
+  frontend:
+    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile

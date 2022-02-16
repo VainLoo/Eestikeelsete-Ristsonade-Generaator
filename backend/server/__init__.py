@@ -1,4 +1,3 @@
-from cmath import log
 import flask
 from flask import Flask
 from redis import Redis
@@ -8,7 +7,6 @@ import traceback
 from server.main.views import main_blueprint
 
 import logging
-import os
 
 
 def create_app():
@@ -23,15 +21,12 @@ def create_app():
     @app.errorhandler(Exception)
     def handle_error(e):
         if isinstance(e, HTTPException):
-            # status_code = e.code
             status_code = 400
         else:
             status_code = 500
 
         message = str(e)
         print(traceback.format_exc())
-        #response = flask.jsonify("<h1>404</h1><p>The resource could not be found.</p>", 404)
-        #response.headers.add('Access-Control-Allow-Origin', '*')
         return flask.jsonify(message=message, error_traceback=traceback.format_exc()), status_code
 
     for ex in default_exceptions:
