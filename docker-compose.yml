@@ -33,16 +33,11 @@ services:
   redis:
     image: redis
 
-    # Frontend Service
+  # Frontend Service
   frontend:
     container_name: frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'
+      dockerfile: Dockerfile.prod
     ports:
-      - 3001:3000
-    environment:
-      - CHOKIDAR_USEPOLLING=true
+      - '1337:80'
