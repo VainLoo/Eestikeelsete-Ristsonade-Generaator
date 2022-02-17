@@ -5,13 +5,13 @@ export class CrosswordService {
     }
 
     postCrossword(length, width) {
-        return fetch("/crossword/?width=" + width + "&length=" + length, { //http://localhost:5000/?width="
+        return fetch(process.env.REACT_APP_FETCH_LINK+"crossword/?width=" + width + "&length=" + length, { //http://localhost:5000/?width="
           method: 'POST',
         }).then(res => res.json());
     }
 
     getTaskState(jobID) {
-        return fetch('/jobs/'+jobID).then((res) => res.json());
+        return fetch(process.env.REACT_APP_FETCH_LINK+'jobs/'+jobID).then((res) => res.json());
     }
 
     getStatus(jobID) {
