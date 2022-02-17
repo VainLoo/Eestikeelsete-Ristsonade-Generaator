@@ -41,3 +41,5 @@ services:
       dockerfile: Dockerfile.prod
     ports:
       - '1337:80'
+    expose:
+      - '80'
