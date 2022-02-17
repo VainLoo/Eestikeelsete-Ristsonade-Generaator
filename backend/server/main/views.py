@@ -6,7 +6,7 @@ import logging
 main_blueprint = Blueprint("main", __name__, template_folder='templates')
 
 
-@main_blueprint.route("/", methods=["POST"])
+@main_blueprint.route("/crossword/", methods=['GET', 'POST'])
 def home():
     width = request.args.get('width', default=10, type = int)
     length = request.args.get('length', default=10, type = int)
