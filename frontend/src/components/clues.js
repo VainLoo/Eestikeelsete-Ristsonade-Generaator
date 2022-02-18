@@ -11,7 +11,7 @@ const Clues = ({ words, check }) => {
         <Accordion multiple activeIndex={[]}>
         <AccordionTab header="Paremale">
             <div className="card">
-                    <DataTable value={words.across} size="small" responsiveLayout="scroll" >
+                    <DataTable value={words.across} size="small" responsiveLayout="scroll" emptyMessage="Puudub ristsõna">
                         <Column field="index" header="Number"></Column>
                         <Column field="clue" header="Vihje" ></Column>
                         {check && <Column field="word" header="Vastus"></Column>}
@@ -20,7 +20,7 @@ const Clues = ({ words, check }) => {
             </AccordionTab>
             <AccordionTab header="Alla">
         <div className="card">
-                    <DataTable value={words.down} size="small" responsiveLayout="scroll">
+                    <DataTable value={words.down} size="small" responsiveLayout="scroll" emptyMessage="Puudub ristsõna">
                         <Column field="index" header="Number"></Column>
                         <Column field="clue" header="Vihje"></Column>
                         {check && <Column field="word" header="Vastus"></Column>}

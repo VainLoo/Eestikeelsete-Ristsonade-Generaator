@@ -11,7 +11,7 @@ from server.main.rq_helpers import redis_connection
 # the result_ttl parameter specifies how long (in seconds)
 # successful jobs and their results are kept.
 # for more detail: https://python-rq.org/docs/jobs/
-@job('default', connection=redis_connection, timeout=9000, result_ttl=7*24*60*60)
+@job('default', connection=redis_connection, timeout=90, result_ttl=7*24*60*60)
 def crossword(width, length):
     grid, words = getCrossword(length, width)
     logging.info("Crossword generated")

@@ -1,12 +1,14 @@
 import './styles/App.css';
 import Crossword from './components/crossword'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CrosswordService } from './CrosswordService';
 import { Button } from 'primereact/button';
 import Clues from './components/clues';
 import { Card } from 'primereact/card';
 import { InputNumber } from 'primereact/inputnumber';
+import { Divider } from 'primereact/divider';
 import '/node_modules/primeflex/primeflex.css';
+import { Toast } from 'primereact/toast';
 
 function App() {
 
@@ -18,16 +20,33 @@ function App() {
   const [sizeWidth, setWitdh] = useState(10);
   const [sizeLength, setLength] = useState(10);
   const [response, setResponse] = useState()
+  const toast = useRef(null);
   const crosswordService = new CrosswordService(setResponse);
 
   useEffect(() => {
     if (response) {
-      console.log(response);
-      setWords(response.data.job_result.words);
-      setLoading1(false);
-      setGrid(response.data.job_result.grid);
+      if (response === 'failed') {
+        console.log("Failed to fetch crossword");
+        showError();
+        setLoading1(false);
+      } else {
+        console.log(response);
+        showSuccess();
+        setWords(response.data.job_result.words);
+        setLoading1(false);
+        setGrid(response.data.job_result.grid);
+      }
+
     }
   }, [response])
+
+  const showError = () => {
+    toast.current.show({severity:'error', summary: 'Viga genereerimisel', detail:'', life: 3000});
+  }
+
+  const showSuccess = () => {
+    toast.current.show({severity:'success', summary: 'Ristsõna edukalt genereeritud', detail:'', life: 3000});
+  }
 
 
   const getData = () => {
@@ -44,6 +63,7 @@ function App() {
 
   return (
     <div>
+      <Toast ref={toast} />
       <Card title="Ristsõna">
         <div className="p-fluid grid formgrid">
           <div className="field col-2">
@@ -56,6 +76,7 @@ function App() {
               decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
           </div>
         </div>
+
         <div className="grid p-fluid">
           <div className='field col-2'>
             <Button label="Loo Ristsõna" loading={loading1} onClick={getData} />
@@ -71,11 +92,17 @@ function App() {
         <div className='col flex align-items-start justify-content-center'>
           <Crossword check={check} grid={grid} reset={reset} setReset={setReset}></Crossword>
         </div>
-        <div className='col'>
+        <div className='col p-3'>
           <Clues words={words} check={check}></Clues>
         </div>
       </div>
 
+      <footer>
+        <Divider />
+        <div className='flex align-content-end justify-content-center'>
+          <p className='font-bold text-gray-700 relative bottom-0'>Copyright © 2022 Allan Loo</p>
+        </div>
+      </footer>
     </div>
   );
 }

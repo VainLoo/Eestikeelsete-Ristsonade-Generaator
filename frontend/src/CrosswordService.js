@@ -22,8 +22,10 @@ export class CrosswordService {
                 this.setResponse(res);
                 return res;
             }
-            else if (jobStatus === 'failed') return false;
-        
+            else if (jobStatus === 'failed') {
+                this.setResponse(jobStatus);
+                return false;
+            }
             setTimeout(() => {
                 this.getStatus(res.data.job_id);
             }, 1000);
