@@ -17,8 +17,8 @@ function App() {
   const [grid, setGrid] = useState([]);
   const [check, setCheck] = useState(false);
   const [reset, setReset] = useState(false);
-  const [sizeWidth, setWitdh] = useState(10);
-  const [sizeLength, setLength] = useState(10);
+  //const [sizeWidth, setWitdh] = useState(10);
+  //const [sizeLength, setLength] = useState(10);
   const [response, setResponse] = useState()
   const toast = useRef(null);
   const crosswordService = new CrosswordService(setResponse);
@@ -55,8 +55,13 @@ function App() {
     setLoading1(true);
     setCheck(false);
     setReset(true);
-    crosswordService.postCrossword(sizeLength, sizeWidth).then(res => {
-      crosswordService.getStatus(res.data.job_id)
+    crosswordService.postCrossword().then(res => {
+      if (res.data.job_status === 'finished') {
+        setResponse(res);
+      } else {
+        crosswordService.getStatus() //res.data.job_id
+      }
+      
     });
   }
 
@@ -64,19 +69,7 @@ function App() {
   return (
     <div>
       <Toast ref={toast} />
-      <Card title="Ristsõna">
-        <div className="p-fluid grid formgrid">
-          <div className="field col-2">
-            <h3>Ristsõna suurus</h3>
-            <label>Pikkus</label>
-            <InputNumber className='mb-2' inputId="minmax-buttons" value={sizeLength} onValueChange={(e) => setLength(e.value)} showButtons mode="decimal" showButtons min={4} max={20}
-              decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
-            <label>Laius</label>
-            <InputNumber inputId="minmax-buttons" value={sizeWidth} onValueChange={(e) => setWitdh(e.value)} showButtons mode="decimal" showButtons min={4} max={20}
-              decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
-          </div>
-        </div>
-
+      <Card title="Eestikeelsete ristsõnade generaator">
         <div className="grid p-fluid">
           <div className='field col-2'>
             <Button label="Loo Ristsõna" loading={loading1} onClick={getData} />
@@ -108,3 +101,19 @@ function App() {
 }
 
 export default App;
+
+{
+  /*
+          <div className="p-fluid grid formgrid">
+          <div className="field col-2">
+            <h3>Ristsõna suurus</h3>
+            <label>Pikkus</label>
+            <InputNumber className='mb-2' inputId="minmax-buttons" value={sizeLength} onValueChange={(e) => setLength(e.value)} showButtons mode="decimal" showButtons min={4} max={20}
+              decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
+            <label>Laius</label>
+            <InputNumber inputId="minmax-buttons" value={sizeWidth} onValueChange={(e) => setWitdh(e.value)} showButtons mode="decimal" showButtons min={4} max={20}
+              decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
+          </div>
+        </div>
+  */
+}

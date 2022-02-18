@@ -12,7 +12,7 @@ import logging
 def create_app():
 
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object("server.config.DevelopmentConfig")
+    app.config.from_object("server.config.ProductionConfig")
     app.register_blueprint(main_blueprint)
     #q = Queue(connection=Redis())
     #app.config["DEBUG"] = True

@@ -4,18 +4,18 @@ export class CrosswordService {
         this.setResponse = setResponse;
     }
 
-    postCrossword(length, width) {
-        return fetch(process.env.REACT_APP_FETCH_LINK+"crossword/?width=" + width + "&length=" + length, { //http://localhost:5000/?width="
+    postCrossword() {
+        return fetch(process.env.REACT_APP_FETCH_LINK+"crossword/", { //http://localhost:5000/?width="
           method: 'POST',
         }).then(res => res.json());
     }
 
-    getTaskState(jobID) {
-        return fetch(process.env.REACT_APP_FETCH_LINK+'jobs/'+jobID).then((res) => res.json());
+    getTaskState() {
+        return fetch(process.env.REACT_APP_FETCH_LINK+'jobs/').then((res) => res.json());
     }
 
-    getStatus(jobID) {
-        return this.getTaskState(jobID).then((res) => {
+    getStatus() {
+        return this.postCrossword().then((res) => {
             let jobStatus = res.data.job_status;
             console.log(jobStatus);
             if (jobStatus === 'finished'){
@@ -27,7 +27,7 @@ export class CrosswordService {
                 return false;
             }
             setTimeout(() => {
-                this.getStatus(res.data.job_id);
+                this.getStatus();
             }, 1000);
         
         })
