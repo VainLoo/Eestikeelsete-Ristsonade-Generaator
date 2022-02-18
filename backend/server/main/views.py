@@ -68,7 +68,7 @@ def CheckPremade():
 
     if doneJobCount < max_stored_results:
         for i in range(max_stored_results-doneJobCount):
-            queue.enqueue(jobs.crossword, random.randint(5, 12), random.randint(5, 12), retry=Retry(max=3))
+            queue.enqueue(jobs.crossword, random.randint(5, 10), random.randint(5, 10), retry=Retry(max=3))
             #jobs.crossword.delay(random.randint(5, 12), random.randint(5, 12), retry=Retry(max=3))
 
     print('finished_job_registry %s' % queue.finished_job_registry.count)
