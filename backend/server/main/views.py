@@ -12,6 +12,7 @@ max_stored_results = 30
 def home():
     #width = request.args.get('width', default=10, type = int)
     #length = request.args.get('length', default=10, type = int)
+    print("finished count %s:" % queue.finished_job_registry.count)
     if queue.finished_job_registry.count > 0:
         doneJob = queue.fetch_job(random.choice(queue.finished_job_registry.get_job_ids()))
         #logging.info("LEITUD TULEMUS:",doneJob)
@@ -29,6 +30,7 @@ def home():
         CheckPremade()
         return response_object, 200
     else:
+        CheckPremade()
         #job = queue.enqueue(jobs.crossword, random.randint(5, 12), random.randint(5, 12), retry=Retry(max=3))
         response_object = jsonify({
             "status": "success",
@@ -68,7 +70,8 @@ def CheckPremade():
 
     if doneJobCount < max_stored_results:
         for i in range(max_stored_results-doneJobCount):
-            queue.enqueue(jobs.crossword, random.randint(5, 10), random.randint(5, 10), retry=Retry(max=3))
+            jobs.crossword.delay(random.randint(5, 10), random.randint(5, 10))
+            #queue.enqueue(jobs.crossword, random.randint(5, 10), random.randint(5, 10), retry=Retry(max=3), result_ttl=-1)
             #jobs.crossword.delay(random.randint(5, 12), random.randint(5, 12), retry=Retry(max=3))
 
     print('finished_job_registry %s' % queue.finished_job_registry.count)
