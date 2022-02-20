@@ -1,3 +1,4 @@
+from operator import ge
 from server.main.rq_helpers import queue
 from flask import Blueprint, jsonify, request
 from server.main import jobs
@@ -5,8 +6,10 @@ from rq import Retry
 import random
 import logging
 
+
 main_blueprint = Blueprint("main", __name__, template_folder='templates')
-max_stored_results = 30
+max_stored_results = 60
+
 
 @main_blueprint.route("/crossword/", methods=['POST'])
 def home():
@@ -31,7 +34,6 @@ def home():
         return response_object, 200
     else:
         CheckPremade()
-        #job = queue.enqueue(jobs.crossword, random.randint(5, 12), random.randint(5, 12), retry=Retry(max=3))
         response_object = jsonify({
             "status": "success",
             "data": {
@@ -71,8 +73,7 @@ def CheckPremade():
     if doneJobCount < max_stored_results:
         for i in range(max_stored_results-doneJobCount):
             jobs.crossword.delay(random.randint(5, 10), random.randint(5, 10))
-            #queue.enqueue(jobs.crossword, random.randint(5, 10), random.randint(5, 10), retry=Retry(max=3), result_ttl=-1)
-            #jobs.crossword.delay(random.randint(5, 12), random.randint(5, 12), retry=Retry(max=3))
+
 
     print('finished_job_registry %s' % queue.finished_job_registry.count)
     print('started_job_registry %s' % queue.started_job_registry.count)

@@ -2,39 +2,20 @@ from cmath import log
 import random
 import logging
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
-import numpy as np
-import pandas as pd
 
-from server.main.GridGenerator import CellInfo, createGrid, printGrid
+from server.main.DataGatherer import getData
+from server.main.GridGenerator import CellInfo, createGrid
 
 anyChar = '[A-ZÜÖÄÕ ]|'
-data = None
 grid = None
 words = None
 allWords = []
 complete = False
+data = None
 
-def getData():
-    # Loeme sisse
-    data = pd.read_json('server/main/defs.jl', lines=True)
-    # Kaotame definitsioonide duplikaadid
-    data.drop_duplicates('def', inplace=True)
-    # Kõik suureks
-    data['name'] = data['name'].str.upper()
-    # Jätame alles ainult kindlate sümbolitega read
-    keepPattern = '^[A-ZÜÖÄÕ ]*$'
-    filtering = data['name'].str.contains(keepPattern)
-    data = data[filtering]
-    # Seame uued indeksid
-    data.reset_index(drop=True, inplace=True)
-
-    data = data.sort_values(ascending=False, by="name", key=lambda x: x.str.len())
-
-    mask = (data['name'].str.len() <= 18) & (data['name'].str.len() >= 3)
-    data = data.loc[mask]
-    data = data.reset_index(drop=True)
-    # print(data)
-    return data
+logging.info("Getting data")
+data = getData()
+logging.info("Data fetched")
 
 
 common = [
@@ -47,9 +28,7 @@ common = [
     "R",
     "A",
     "O",
-    "Y",
     "P",
-    "C",
     "N",
     "M",
 ]
@@ -333,11 +312,8 @@ def showClues():
 
 def getCrossword(length, width):
     logging.info("Starting generation")
-    global data
     global grid
     global words
-    data = getData()
-    logging.info("Data gathered")
 
     while True:
         try:
