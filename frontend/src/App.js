@@ -1,14 +1,14 @@
 import './styles/App.css';
-import Crossword from './components/crossword'
+import '/node_modules/primeflex/primeflex.css';
 import React, { useState, useEffect, useRef } from 'react';
+import PrintComponent from './components/printComponent';
 import { CrosswordService } from './CrosswordService';
 import { Button } from 'primereact/button';
-import Clues from './components/clues';
 import { Card } from 'primereact/card';
-import { InputNumber } from 'primereact/inputnumber';
 import { Divider } from 'primereact/divider';
-import '/node_modules/primeflex/primeflex.css';
 import { Toast } from 'primereact/toast';
+
+import { useReactToPrint } from 'react-to-print';
 
 function App() {
 
@@ -16,12 +16,18 @@ function App() {
   const [words, setWords] = useState({});
   const [grid, setGrid] = useState([]);
   const [check, setCheck] = useState(false);
+  const [checkIcon, setCheckIcon] = useState('pi pi-times');
   const [reset, setReset] = useState(false);
   //const [sizeWidth, setWitdh] = useState(10);
   //const [sizeLength, setLength] = useState(10);
   const [response, setResponse] = useState()
   const toast = useRef(null);
   const crosswordService = new CrosswordService(setResponse);
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   useEffect(() => {
     if (response) {
@@ -41,11 +47,11 @@ function App() {
   }, [response])
 
   const showError = () => {
-    toast.current.show({severity:'error', summary: 'Viga genereerimisel', detail:'', life: 3000});
+    toast.current.show({ severity: 'error', summary: 'Viga genereerimisel', detail: '', life: 3000 });
   }
 
   const showSuccess = () => {
-    toast.current.show({severity:'success', summary: 'Ristsõna edukalt genereeritud', detail:'', life: 3000});
+    toast.current.show({ severity: 'success', summary: 'Ristsõna edukalt genereeritud', detail: '', life: 3000 });
   }
 
 
@@ -59,9 +65,9 @@ function App() {
       if (res.data.job_status === 'finished') {
         setResponse(res);
       } else {
-        crosswordService.getStatus() //res.data.job_id
+        crosswordService.getStatus()
       }
-      
+
     });
   }
 
@@ -71,24 +77,21 @@ function App() {
       <Toast ref={toast} />
       <Card title="Eestikeelsete ristsõnade generaator">
         <div className="grid p-fluid">
-          <div className='field col-2'>
-            <Button label="Loo Ristsõna" loading={loading1} onClick={getData} />
-            {grid.length > 0 ? <Button label="Kontrolli" onClick={() => setCheck(true)} />
-              : <Button label="Kontrolli" onClick={() => setCheck(true)} disabled />
+          <div className='field col-12 lg:col-3'>
+            <Button label="Loo Ristsõna" icon="pi pi-star-fill" iconPos="right" loading={loading1} onClick={getData} />
+            {grid.length > 0 ? <Button onClick={() => {setCheck(!check); check ? setCheckIcon('pi pi-times') : setCheckIcon('pi pi-check')}} icon={checkIcon} iconPos="right" label="Kontrolli"/>
+              : <Button icon={checkIcon} iconPos="right" label="Kontrolli" disabled />
             }
+            {grid.length > 0 ? <Button label="Prindi" icon="pi pi-print" iconPos="right" onClick={handlePrint} />
+              : <Button icon="pi pi-print" iconPos="right" label="Prindi" disabled />
+            }
+
           </div>
         </div>
       </Card>
 
 
-      <div className='grid flex justify-content-center flex-wrap'>
-        <div className='col flex align-items-start justify-content-center'>
-          <Crossword check={check} grid={grid} reset={reset} setReset={setReset}></Crossword>
-        </div>
-        <div className='col p-3'>
-          <Clues words={words} check={check}></Clues>
-        </div>
-      </div>
+      <PrintComponent ref={componentRef} check={check} grid={grid} reset={reset} words={words} setReset={setReset} />
 
       <footer>
         <Divider />
@@ -101,19 +104,3 @@ function App() {
 }
 
 export default App;
-
-{
-  /*
-          <div className="p-fluid grid formgrid">
-          <div className="field col-2">
-            <h3>Ristsõna suurus</h3>
-            <label>Pikkus</label>
-            <InputNumber className='mb-2' inputId="minmax-buttons" value={sizeLength} onValueChange={(e) => setLength(e.value)} showButtons mode="decimal" showButtons min={4} max={20}
-              decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
-            <label>Laius</label>
-            <InputNumber inputId="minmax-buttons" value={sizeWidth} onValueChange={(e) => setWitdh(e.value)} showButtons mode="decimal" showButtons min={4} max={20}
-              decrementButtonClassName="p-button-secondary noMargin" incrementButtonClassName="p-button-secondary noMargin" />
-          </div>
-        </div>
-  */
-}

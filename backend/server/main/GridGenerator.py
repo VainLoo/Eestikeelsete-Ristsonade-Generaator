@@ -27,7 +27,7 @@ def printGrid(grid, header="default"):
 
 
 def preventBlockedWhiteSquares(grid):
-    for i in range(math.floor(len(grid)/2)):
+    for i in range(len(grid)):
         for j in range(len(grid[0])):
             curCell = grid[i][j]
 
@@ -186,6 +186,35 @@ def processDisjointedWordsAcross(rowCount: int, colCount: int, grid):
             else:
                 continue
 
+# Reduce large blocks of white spaces
+def reduceLargeWhiteSquares(length, width, grid):
+    for i in range(1, length-1):
+        for j in range(1, width-1):
+            curCell: CellInfo = grid[i][j]
+
+            nineSquare = [
+                grid[i - 1][j - 1],
+                curCell.above,
+                grid[i - 1][j + 1],
+                grid[i + 1][j - 1],
+                curCell.below,
+                grid[i + 1][j + 1],
+                curCell.prev,
+                curCell.next,
+                curCell
+            ]
+
+            whiteSquareCount = 0
+
+            for cell in nineSquare:
+                if cell.contents != "#": whiteSquareCount += 1
+
+            if whiteSquareCount > 7:
+                curCell.contents = "#"
+                curCell.opposite.contents = "#"
+
+
+
 def createGrid(length, width):
     global blackSqCount
     global letterCount
@@ -231,31 +260,7 @@ def createGrid(length, width):
     eliminateTwoLetterWords(grid)
     #printGrid(grid, "Eliminate Two letter words")
 
-    # Reduce large blocks of white spaces
-    for i in range(1, math.floor(length/2)-1):
-        for j in range(1, width-1):
-            curCell: CellInfo = grid[i][j]
-
-            nineSquare = [
-                grid[i - 1][j - 1],
-                curCell.above,
-                grid[i - 1][j + 1],
-                grid[i + 1][j - 1],
-                curCell.below,
-                grid[i + 1][j + 1],
-                curCell.prev,
-                curCell.next,
-                curCell
-            ]
-
-            whiteSquareCount = 0
-
-            for cell in nineSquare:
-                if cell.contents != "#": whiteSquareCount += 1
-
-            if whiteSquareCount > 7:
-                curCell.contents = "#"
-                curCell.opposite.contents = "#"
+    reduceLargeWhiteSquares(length, width, grid)
 
     preventBlockedWhiteSquares(grid)
     #printGrid(grid, "Prevent Blocked White Squares")

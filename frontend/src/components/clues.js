@@ -1,14 +1,17 @@
-import React from 'react';
-import { Fieldset } from 'primereact/fieldset';
+import React, { useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Card } from 'primereact/card';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 
+
 const Clues = ({ words, check }) => {
+
+    const [activeIndex, setActiveIndex] = useState(null);
+
     return <div>
         <Card title="Küsimused">
-        <Accordion multiple activeIndex={[]}>
+        <Accordion multiple activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
         <AccordionTab header="Paremale">
             <div className="card">
                     <DataTable value={words.across} size="small" responsiveLayout="scroll" emptyMessage="Puudub ristsõna">
