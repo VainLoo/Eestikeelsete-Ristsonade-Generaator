@@ -213,6 +213,12 @@ def reduceLargeWhiteSquares(length, width, grid):
                 curCell.contents = "#"
                 curCell.opposite.contents = "#"
 
+def cleanGrid(grid):
+    for row in grid:
+        for cell in row:
+            if cell.contents != "#":
+                cell.contents = ""
+
 
 
 def createGrid(length, width):
@@ -265,8 +271,8 @@ def createGrid(length, width):
     preventBlockedWhiteSquares(grid)
     #printGrid(grid, "Prevent Blocked White Squares")
 
-    processDisjointedWordsAcross(math.floor(length/2), width, grid)
-    processDisjointedWordsDown(length, math.floor(width/2), grid)
+    processDisjointedWordsAcross(length, width, grid)
+    processDisjointedWordsDown(length, width, grid)
     #printGrid(grid, "Process Disjointed Words")
 
     eliminateTwoLetterWords(grid)
@@ -274,3 +280,5 @@ def createGrid(length, width):
 
     return grid
 
+#g = createGrid(10,10)
+#printGrid(g)

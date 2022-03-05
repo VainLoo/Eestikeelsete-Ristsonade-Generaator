@@ -1,16 +1,16 @@
-from cmath import log
 import random
 import logging
 logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 from server.main.DataGatherer import getData
-from server.main.GridGenerator import CellInfo, createGrid
+from server.main.GridGenerator import CellInfo, createGrid, printGrid
+#from DataGatherer import getData
+#from GridGenerator import CellInfo, cleanGrid, createGrid, printGrid
 
-anyChar = '[A-ZÜÖÄÕ ]|'
+anyChar = '[A-ZÜÖÄÕŠŽ ]|'
 grid = None
 words = None
 allWords = []
-complete = False
 data = None
 
 logging.info("Getting data")
@@ -54,7 +54,6 @@ class Words:
 def makeWords(length, width):
     global allWords
     allWords = []
-    global complete
     words = Words()
 
     numberCount = 1
@@ -294,7 +293,7 @@ def createWordsAndClues():
         findDownWords(word)
 
     fillRemainingDownWords()
-    complete = True
+
 
     showClues()
 
@@ -327,7 +326,6 @@ def getCrossword(length, width):
             logging.info("Trying again")
         except ValueError:
             logging.info("ValueError")
-
 
 def getGridList():
     gridList = []
@@ -380,5 +378,6 @@ def getClueList():
 
 
 
-          
+#grid, words = getCrossword(10,10)
+#printGrid(grid)
 

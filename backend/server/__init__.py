@@ -1,4 +1,3 @@
-import flask
 from flask import Flask
 from redis import Redis
 from werkzeug.exceptions import default_exceptions  # exception handling

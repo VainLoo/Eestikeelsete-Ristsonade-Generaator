@@ -61,6 +61,7 @@ function App() {
     setLoading1(true);
     setCheck(false);
     setReset(true);
+    setCheckIcon('pi pi-times')
     crosswordService.postCrossword().then(res => {
       if (res.data.job_status === 'finished') {
         setResponse(res);
