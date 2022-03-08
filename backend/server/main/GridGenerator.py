@@ -68,7 +68,7 @@ def processTwoLetterWords(i: int, j: int, direction, grid):
 def eliminateTwoLetterWords(grid):
     global letterCount
     # vasakult paremale, ülevalt alla
-    for i in range(math.floor(len(grid)/2)):
+    for i in range(len(grid)):
         letterCount = 0
         for j in range(len(grid[0])):
             processTwoLetterWords(i, j, "across", grid)
@@ -82,13 +82,13 @@ def eliminateTwoLetterWords(grid):
     # Ülevalt alla, vasakult paremale
     for j in range(len(grid[0])):
         letterCount = 0
-        for i in range(math.floor(len(grid)/2)):
+        for i in range(len(grid)):
             processTwoLetterWords(j, i, "down", grid)
 
     # alt ülesse, paremalt vasakule
     for j in range(len(grid[0])-1, -1, -1):
         letterCount = 0
-        for i in range(math.floor(len(grid)/2), -1, -1):
+        for i in range(len(grid)-1, -1, -1):
             processTwoLetterWords(j, i, "down", grid)
 
 
@@ -245,7 +245,7 @@ def createGrid(length, width):
             grid[i][j].prev = grid[i][j - 1] if j > 0 else False
             grid[i][j].next = grid[i][j + 1] if j < width-1 else False
 
-    while blackSqCount < (length*width*0.8):
+    while blackSqCount < (length*width*0.4):
         for i in range(math.floor(length/2)):
             for j in range(width):
                 rand = random.random()
@@ -270,7 +270,6 @@ def createGrid(length, width):
 
     preventBlockedWhiteSquares(grid)
     #printGrid(grid, "Prevent Blocked White Squares")
-
     processDisjointedWordsAcross(length, width, grid)
     processDisjointedWordsDown(length, width, grid)
     #printGrid(grid, "Process Disjointed Words")
@@ -280,5 +279,5 @@ def createGrid(length, width):
 
     return grid
 
-#g = createGrid(10,10)
+#g = createGrid(7,6)
 #printGrid(g)

@@ -5,11 +5,11 @@ import '../styles/Cell.css';
 
 const Cell = ({ cell, check, reset, setReset }) => {
 
-    const [value, setValue] = useState(" ");
+    const [value, setValue] = useState('');
     const [truevalue] = useState(cell.contents);
 
     useEffect(() => {
-        if (reset) setValue(" ");
+        if (reset) setValue('');
         setReset(false);
     }, [reset]);
 

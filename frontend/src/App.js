@@ -36,7 +36,7 @@ function App() {
         showError();
         setLoading1(false);
       } else {
-        console.log(response);
+        //console.log(response);
         showSuccess();
         setWords(response.data.job_result.words);
         setLoading1(false);

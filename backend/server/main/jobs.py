@@ -1,5 +1,8 @@
 
+from distutils.log import error
 import logging
+
+from urllib3 import disable_warnings
 from rq.decorators import job
 from server.main.CrosswordGenerator import getClueList, getCrossword, getGridList
 from server.main.rq_helpers import redis_connection
@@ -17,6 +20,15 @@ def crossword(width, length):
     logging.info("Crossword generated")
     words = getClueList()
     logging.info("word list made")
+
+    for aw in words['across']:
+        logging.info(aw)
+        if len(aw['word']) <= 0:
+            raise error("Not every word filled")
+    for dw in words['down']:
+        logging.info(dw)
+        if len(dw['word']) <= 0:
+            raise error("Not every word filled")
     grid = getGridList()
     logging.info("Grid list made")
 
