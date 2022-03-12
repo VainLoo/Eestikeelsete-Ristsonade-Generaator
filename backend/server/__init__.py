@@ -1,4 +1,5 @@
 import traceback
+import flask
 from flask import Flask
 from server.main.views import main_blueprint
 from werkzeug.exceptions import HTTPException
