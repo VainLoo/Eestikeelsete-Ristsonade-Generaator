@@ -6,7 +6,7 @@ export class CrosswordService {
 
     postCrossword() {
         return fetch(process.env.REACT_APP_FETCH_LINK+"crossword/", { 
-          method: 'POST',
+          method: 'GET',
         }).then(res => res.json());
     }
 

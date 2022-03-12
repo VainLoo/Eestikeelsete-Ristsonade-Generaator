@@ -6,15 +6,15 @@ import logging
 
 
 main_blueprint = Blueprint("main", __name__, template_folder='templates')
-max_stored_results = 4000
+max_stored_results = 1000
 
 
-@main_blueprint.route("/crossword/", methods=['POST'])
+@main_blueprint.route("/crossword/", methods=['GET'])
 def home():
     #width = request.args.get('width', default=10, type = int)
     #length = request.args.get('length', default=10, type = int)
     print("finished count %s:" % queue.finished_job_registry.count)
-    if (queue.finished_job_registry.count + queue.started_job_registry.count + len(queue.get_job_ids())) > max_stored_results:
+    if queue.finished_job_registry.count > 0:
         doneJob = queue.fetch_job(random.choice(queue.finished_job_registry.get_job_ids()))
         #logging.info("LEITUD TULEMUS:",doneJob)
         response_object = {
@@ -34,8 +34,7 @@ def home():
         CheckPremade()
         response_object = jsonify({
             "status": "success",
-            "data": {
-                
+            "data": {   
             }
         })
         response_object.headers.add('Access-Control-Allow-Origin', '*')
@@ -73,9 +72,9 @@ def CheckPremade():
             jobs.crossword.delay(random.randint(6, 12), random.randint(6, 12))
 
 
-    print('finished_job_registry %s' % queue.finished_job_registry.count)
-    print('started_job_registry %s' % queue.started_job_registry.count)
-    print('In queue:', len(queue.get_job_ids()))
-    print("TOTAL:", effectiveJobsCount ) 
+    logging.info('finished_job_registry %s' % queue.finished_job_registry.count)
+    logging.info('started_job_registry %s' % queue.started_job_registry.count)
+    logging.info('In queue: {}'.format(len(queue.get_job_ids())))
+    logging.info("TOTAL: {}".format(effectiveJobsCount)) 
 
 CheckPremade()

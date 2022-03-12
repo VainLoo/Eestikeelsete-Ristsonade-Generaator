@@ -1,3 +1,4 @@
+from weakref import ref
 from server.main.GridGenerator import CellInfo, createGrid, printGrid
 from server.main.DataGatherer import getData
 import logging
@@ -277,9 +278,30 @@ def getCrossword(length, width):
     logging.info("Grid generated")
     words = makeWords(length, width)
     logging.info("Words generated")
+    checkWords(words)
+    logging.info("Word length checked")
     recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True)
+    logging.info("Crossword filled")
+    checkWordsFilled(words)
+    logging.info("Words fill checked")
     return grid, words
 
+
+def checkWords(words: Words):
+    for key, aw in words.across.items():
+        if len(aw.ref) <= 2:
+            raise Exception("Too short word")
+    for key, dw in words.down.items():
+        if len(dw.ref) <= 2:
+            raise Exception("Too short word")
+
+def checkWordsFilled(words: Words):
+    for key, aw in words.across.items():
+        if len(aw.word) <= 0:
+            raise Exception("Not every word filled")
+    for key, dw in words.down.items():
+        if len(dw.word) <= 0:
+            raise Exception("Not every word filled")
 
 def getGridList():
     gridList = []

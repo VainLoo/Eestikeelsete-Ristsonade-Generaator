@@ -2,7 +2,6 @@
 from server.main.CrosswordGenerator import getClueList, getCrossword, getGridList
 from server.main.rq_helpers import redis_connection
 from server.main.rq_helpers import queue
-from distutils.log import error
 from rq.decorators import job
 from rq import Retry
 import logging
@@ -18,15 +17,6 @@ def crossword(width, length):
     logging.info("Crossword generated")
     words = getClueList()
     logging.info("word list made")
-
-    for aw in words['across']:
-        logging.info(aw)
-        if len(aw['word']) <= 0:
-            raise error("Not every word filled")
-    for dw in words['down']:
-        logging.info(dw)
-        if len(dw['word']) <= 0:
-            raise error("Not every word filled")
     grid = getGridList()
     logging.info("Grid list made")
 
