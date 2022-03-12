@@ -17,7 +17,7 @@ export class CrosswordService {
     getStatus() {
         return this.postCrossword().then((res) => {
             let jobStatus = res.data.job_status;
-            console.log(jobStatus);
+            //console.log(jobStatus);
             if (jobStatus === 'finished'){
                 this.setResponse(res);
                 return res;
