@@ -6,7 +6,7 @@ from rq.decorators import job
 from rq import Retry
 import logging
 
-@job('default', connection=redis_connection, timeout=90, result_ttl=-1, retry=Retry(max=3))
+@job('default', connection=redis_connection, timeout=120, result_ttl=-1, retry=Retry(max=3))
 def crossword(width, length):
     grid, words = getCrossword(length, width)
     logging.info("Crossword generated")

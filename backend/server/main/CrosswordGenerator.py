@@ -222,7 +222,7 @@ def recursionFill(word: Word, isAcross: bool):
                 if not w.done:
                     tries = 0
                     while True:
-                        if tries >= 30:
+                        if tries >= 20:
                             removeWord(word)
                             #printGrid(grid)
                             return False
@@ -242,7 +242,7 @@ def recursionFill(word: Word, isAcross: bool):
                 if not w.done:
                     tries = 0
                     while True:
-                        if tries >= 30:
+                        if tries >= 20:
                             removeWord(word)
                             #printGrid(grid)
                             return False
@@ -273,12 +273,14 @@ def getCrossword(length, width):
     logging.info("Starting generation")
     global grid
     global words
+
+    while True:
+        grid = createGrid(length, width)
+        logging.info("Grid generated")
+        words = makeWords(length, width)
+        logging.info("Words generated")
+        if checkWords(words): break
     
-    grid = createGrid(length, width)
-    logging.info("Grid generated")
-    words = makeWords(length, width)
-    logging.info("Words generated")
-    checkWords(words)
     logging.info("Word length checked")
     recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True)
     logging.info("Crossword filled")
@@ -290,10 +292,13 @@ def getCrossword(length, width):
 def checkWords(words: Words):
     for key, aw in words.across.items():
         if len(aw.ref) <= 2:
-            raise Exception("Too short word")
+            logging.info("Too short word")
+            return False
     for key, dw in words.down.items():
         if len(dw.ref) <= 2:
-            raise Exception("Too short word")
+            logging.info("Too short word")
+            return False
+    return True
 
 def checkWordsFilled(words: Words):
     for key, aw in words.across.items():
@@ -353,10 +358,7 @@ def getClueList():
     return wordDict
 
 
-#start = time.time()
 #grid, words = getCrossword(12,12)
-#end = time.time()
-#logging.info("AJAKULU: {}".format(end - start))
 
 #printGrid(grid)
 #showClues()

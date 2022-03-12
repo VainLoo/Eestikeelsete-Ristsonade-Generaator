@@ -6,7 +6,7 @@ import logging
 
 
 main_blueprint = Blueprint("main", __name__, template_folder='templates')
-max_stored_results = 1000
+max_stored_results = 2400
 
 
 @main_blueprint.route("/crossword/", methods=['GET'])

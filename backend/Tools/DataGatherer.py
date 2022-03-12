@@ -2,6 +2,7 @@ import nltk
 import logging
 import jsonlines
 import pandas as pd
+import numpy as np
 from estnltk import Text
 from estnltk.wordnet import Wordnet
 from estnltk.vabamorf.morf import synthesize
@@ -117,7 +118,10 @@ def FilterData():
 
     logging.info("Removing unfitting")
     data['def'] = data.apply(lambda row : removeUnfitting(row), axis = 1)
-    data = data.dropna()
+
+    data.replace('', np.nan, inplace=True)
+    data.dropna(how='any', inplace=True)
+
     data.reset_index(drop=True, inplace=True)
 
     data.to_csv('backend/Tools/finalData.csv', index=False)
