@@ -1,13 +1,11 @@
 
-from distutils.log import error
-import logging
-
-from urllib3 import disable_warnings
-from rq.decorators import job
 from server.main.CrosswordGenerator import getClueList, getCrossword, getGridList
 from server.main.rq_helpers import redis_connection
 from server.main.rq_helpers import queue
+from distutils.log import error
+from rq.decorators import job
 from rq import Retry
+import logging
 
 # the timeout parameter specifies how long a job may take
 # to execute before it is aborted and regardes as failed

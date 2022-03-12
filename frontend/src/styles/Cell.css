@@ -3,9 +3,13 @@
     height: 6vw;
     max-width: 70px;
     max-height: 70px;
-    min-width: 50px;
-    min-height: 50px;
+    min-width: 40px;
+    min-height: 40px;
     text-align: center;
+}
+
+.p-inputtext {
+    font-size: 2.5vw !important;
 }
 
 .rightCell {

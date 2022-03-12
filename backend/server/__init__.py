@@ -1,11 +1,8 @@
-from flask import Flask
-from redis import Redis
-from werkzeug.exceptions import default_exceptions  # exception handling
-from werkzeug.exceptions import HTTPException
 import traceback
+from flask import Flask
 from server.main.views import main_blueprint
-
-import logging
+from werkzeug.exceptions import HTTPException
+from werkzeug.exceptions import default_exceptions # exception handling
 
 
 def create_app():
@@ -13,8 +10,6 @@ def create_app():
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object("server.config.ProductionConfig")
     app.register_blueprint(main_blueprint)
-    #q = Queue(connection=Redis())
-    #app.config["DEBUG"] = True
 
 
     @app.errorhandler(Exception)

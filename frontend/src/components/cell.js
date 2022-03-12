@@ -19,11 +19,11 @@ const Cell = ({ cell, check, reset, setReset }) => {
                 <div className='box'>
                     <i className="cornerNumber p-component">{cell.clueNumber}</i>
                     {check ? value === truevalue ? truevalue === " " ? <InputText disabled className='cell border-noround' maxLength="1" id="cell" value={cell.contents} data-truevalue={truevalue} tooltip="See on tühik" tooltipOptions={{ showOnDisabled: true }}/> 
-                        : <InputText className='cell rightCell border-noround' maxLength="1" id="cell" value={value} onChange={(e) => setValue(e.target.value.toUpperCase())} keyfilter={/^[a-zöäüõšžA-ZÖAÖÜŠŽ ]$/} data-truevalue={truevalue} />
+                        : <InputText className='cell rightCell border-noround' maxLength="1" id="cell" value={value} onChange={(e) => setValue(e.target.value.toUpperCase())} keyfilter={/^[a-zöäüõšžA-ZÖAÖÜŠŽ]$/} data-truevalue={truevalue} />
                         : truevalue === " " ? <InputText disabled className='cell border-noround' maxLength="1" id="cell" value={cell.contents} data-truevalue={truevalue} tooltip="See on tühik" tooltipOptions={{ showOnDisabled: true }}/> 
-                        : <InputText className='cell wrongCell border-noround' maxLength="1" id="cell" value={value} onChange={(e) => setValue(e.target.value.toUpperCase())} keyfilter={/^[a-zöäüõšžA-ZÖAÖÜŠŽ ]$/} data-truevalue={truevalue} />
+                        : <InputText className='cell wrongCell border-noround' maxLength="1" id="cell" value={value} onChange={(e) => setValue(e.target.value.toUpperCase())} keyfilter={/^[a-zöäüõšžA-ZÖAÖÜŠŽ]$/} data-truevalue={truevalue} />
                         : truevalue === " " ? <InputText disabled className='cell border-noround' maxLength="1" id="cell" value={cell.contents} data-truevalue={truevalue} tooltip="See on tühik" tooltipOptions={{ showOnDisabled: true }}/> 
-                        : <InputText className='cell border-noround' maxLength="1" id="cell" value={value} onChange={(e) => setValue(e.target.value.toUpperCase())} keyfilter={/^[a-zöäüõšžA-ZÖAÖÜŠŽ ]$/} data-truevalue={truevalue} />
+                        : <InputText className='cell border-noround' maxLength="1" id="cell" value={value} onChange={(e) => setValue(e.target.value.toUpperCase())} keyfilter={/^[a-zöäüõšžA-ZÖAÖÜŠŽ]$/} data-truevalue={truevalue} />
                     }
 
                 </div>

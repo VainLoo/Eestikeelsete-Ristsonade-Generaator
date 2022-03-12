@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "ET-Gen",
+  "name": "Eestikeelsete Ristsõnade Generaator",
   "icons": [
     {
       "src": "favicon.ico",

@@ -1,15 +1,11 @@
-from ast import List
-import random
-import logging
-from xmlrpc.client import Boolean
-import time
-from pandas import DataFrame
-logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
-
-from server.main.DataGatherer import getData
 from server.main.GridGenerator import CellInfo, createGrid, printGrid
+from server.main.DataGatherer import getData
+import logging
+
 #from DataGatherer import getData
 #from GridGenerator import CellInfo, cleanGrid, createGrid, printGrid
+
+logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
 
 anyChar = '[A-ZÜÖÄÕŠŽ ]|'
 grid = None
@@ -20,23 +16,6 @@ data = None
 logging.info("Getting data")
 data = getData()
 logging.info("Data fetched")
-
-
-common = [
-    "T",
-    "L",
-    "D",
-    "E",
-    "I",
-    "S",
-    "R",
-    "A",
-    "O",
-    "P",
-    "N",
-    "M",
-]
-
 
 class Word:
     def __init__(self, w="", r=None, c="", b=None, d=False):
@@ -180,96 +159,6 @@ def removeWord(word: Word):
     
 
 
-def findDownWords(word: Word):
-    global words
-    m = 0
-    while m < len(word.ref):
-        if word.ref[m].downNumber != "":
-            try:
-                downWord: Word = words.down[word.ref[m].downNumber]
-            except:
-                print(words.down)
-                print(word.ref[m])
-                raise Exception("error2")
-                
-            count = 0
-
-            for square in downWord.ref:
-                if square.contents == "":
-                    count += 1
-
-            if count > 0:
-                qParams = ((anyChar * len(downWord.ref))[:-1]).split('|')
-
-                for indx, cell in enumerate(downWord.ref):
-                    if cell.contents != "":
-                        qParams[indx] = cell.contents
-
-                qParams = ''.join(map(str, qParams))
-                qParams = '^' + qParams + '$'
-
-                downWordList = getNewWord(qParams)
-
-                if len(downWordList) <= 0:
-                    for refIndx in range(m, -1, -1):
-                        if refIndx == 0:
-                            backer: Word = word
-                            return False
-                        if word.ref[m].downNumber != "":
-                            backer: Word = words.down[word.ref[m].downNumber]
-                            for cell in backer.ref:
-                                cell.contents = ""
-                                m = refIndx
-                                continue
-
-
-                    #raise FileNotFoundError("No words found")
-
-                retrivedDownPair = downWordList.sample()
-
-                downWordList = downWordList.drop(retrivedDownPair.index)
-                retrivedDownWord = retrivedDownPair['name'].values[0]
-
-                while not isValidWord(retrivedDownWord, downWord):
-                    retrivedDownPair = downWordList.sample()
-                    downWordList = downWordList.drop(retrivedDownPair.index)
-                    retrivedDownWord = retrivedDownPair['name'].values[0]
-
-                #print("Valid word", retrivedDownWord)
-
-                # Seame sõna ristsõna külge
-                setWord(retrivedDownPair, downWord)
-
-        m += 1
-
-
-def fillRemainingDownWords():
-    allDownWords = list(words.down.keys())
-
-    for i in range(len(allDownWords)):
-        current: Word = words.down[allDownWords[i]]
-
-        if current.ref[0].contents == "":
-            query = ((anyChar * len(current.ref))[:-1]).split('|')
-            randIndx = random.randint(0, len(query) - 1)
-            query[randIndx] = random.choice(common)
-
-            newWordList = getNewWord(query)
-
-            if len(newWordList) <= 0:
-                raise FileNotFoundError("No words found")
-
-            finalNewPair = newWordList.sample()
-            newWordList = newWordList.drop(finalNewPair.index)
-            retrivedWord = finalNewPair['name'].values[0]
-
-            while not isValidWord(retrivedWord, current):
-                finalNewPair = newWordList.sample()
-                newWordList = newWordList.drop(finalNewPair.index)
-                retrivedWord = finalNewPair['name'].values[0]
-
-            setWord(finalNewPair, current)
-
 def chooseWord(word: Word, retrivedWordList):
     if len(retrivedWordList) <= 0:
         return False, retrivedWordList
@@ -287,22 +176,16 @@ def chooseWord(word: Word, retrivedWordList):
     return True, retrivedWordList
 
 
-def recursionFill(word: Word, isAcross: bool, acrossIndx: int, downIndx: int, acrossKeys: List, downKeys: List):
+def recursionFill(word: Word, isAcross: bool):
 
     leng = len(word.ref)
     queryParams = ((anyChar * leng)[:-1]).split('|')
 
-    count = 0
     word.backtrack.clear()
     for j in range(leng):
         if word.ref[j].contents != "":
             word.backtrack.append(j)
-            count += 1
             queryParams[j] = word.ref[j].contents
-
-    if count == 0:
-        randIndx = random.randint(0, len(queryParams) - 1)
-        queryParams[randIndx] = random.choice(common)
 
     queryParams = ''.join(map(str, queryParams))
     queryParams = '^' + queryParams + '$'
@@ -314,7 +197,6 @@ def recursionFill(word: Word, isAcross: bool, acrossIndx: int, downIndx: int, ac
 
     if len(retrivedWordList) <= 0:
         return False
-        raise FileNotFoundError("No words found")
     
     retrivedPair = retrivedWordList.sample()
     retrivedWordList = retrivedWordList.drop(retrivedPair.index)
@@ -339,11 +221,11 @@ def recursionFill(word: Word, isAcross: bool, acrossIndx: int, downIndx: int, ac
                 if not w.done:
                     tries = 0
                     while True:
-                        if tries >= 10:
+                        if tries >= 30:
                             removeWord(word)
                             #printGrid(grid)
                             return False
-                        if not recursionFill(w, not isAcross, acrossIndx, downIndx+1, acrossKeys, downKeys):
+                        if not recursionFill(w, not isAcross):
                             tries+=1
                             removeWord(word)
                             gotWord, retrivedWordList = chooseWord(word, retrivedWordList)
@@ -363,7 +245,7 @@ def recursionFill(word: Word, isAcross: bool, acrossIndx: int, downIndx: int, ac
                             removeWord(word)
                             #printGrid(grid)
                             return False
-                        if not recursionFill(w, not isAcross, acrossIndx+1, downIndx, acrossKeys, downKeys):
+                        if not recursionFill(w, not isAcross):
                             tries+=1
                             removeWord(word)
                             gotWord, retrivedWordList = chooseWord(word, retrivedWordList)
@@ -373,75 +255,6 @@ def recursionFill(word: Word, isAcross: bool, acrossIndx: int, downIndx: int, ac
                             word.backtrack.append(indx)  
                             break
     return True
-
-def createWordsAndClues():
-    # Loo päringu sisu
-
-    acrossWords = list(words.across.keys())
-    i = 0
-    while i < len(acrossWords):
-        #print("Across I",acrossWords[i])
-        #print(words.across[acrossWords[i]])
-        try:
-            word: Word = words.across[acrossWords[i]]
-        except:
-            print(words.across)
-            print(acrossWords)
-            raise Exception("error")
-            
-        leng = len(word.ref)
-        queryParams = ((anyChar * leng)[:-1]).split('|')
-
-        count = 0
-
-        for j in range(leng):
-            if word.ref[j].contents != "":
-                word.backtrack.append(word.ref[j].contents)
-                count += 1
-                queryParams[j] = word.ref[j].contents
-
-        if count == 0:
-            randIndx = random.randint(0, len(queryParams) - 1)
-            queryParams[randIndx] = random.choice(common)
-
-        queryParams = ''.join(map(str, queryParams))
-        queryParams = '^' + queryParams + '$'
-
-        retrivedWordList = getNewWord(queryParams)
-        retrivedWord: str = ""
-
-        # print(retrivedWordList)
-
-        if len(retrivedWordList) <= 0:
-            raise FileNotFoundError("No words found")
-
-        retrivedPair = retrivedWordList.sample()
-        retrivedWordList = retrivedWordList.drop(retrivedPair.index)
-        retrivedWord = retrivedPair['name'].values[0]
-
-        while not isValidWord(retrivedWord, word):
-            retrivedPair = retrivedWordList.sample()
-            retrivedWordList = retrivedWordList.drop(retrivedPair.index)
-            retrivedWord = retrivedPair['name'].values[0]
-
-        #print("Valid word", retrivedWord)
-
-        # Seame sõna ristsõna külge
-        setWord(retrivedPair, word)
-
-        if not findDownWords(word):
-            for indx, cell in enumerate(word.ref):
-                if indx not in word.backtrack:
-                    cell.contents = ""
-                i -= 1
-                continue
-
-        i += 1
-
-    fillRemainingDownWords()
-
-
-    showClues()
 
 
 def showClues():
@@ -460,21 +273,13 @@ def getCrossword(length, width):
     global grid
     global words
     
-    while True:
-        #try:
-        grid = createGrid(length, width)
-        logging.info("Grid generated")
-        words = makeWords(length, width)
-        logging.info("Words generated")
-        #createWordsAndClues()
-        aKeys = list(words.across.keys())
-        bKeys = list(words.down.keys())
-        recursionFill(word=words.across[aKeys[0]], isAcross=True, acrossIndx=0, downIndx=0, acrossKeys=aKeys, downKeys=bKeys)
-        return grid, words
-        #except FileNotFoundError:
-            #logging.info("Trying again")
-        #except ValueError:
-            #logging.info("ValueError")
+    grid = createGrid(length, width)
+    logging.info("Grid generated")
+    words = makeWords(length, width)
+    logging.info("Words generated")
+    recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True)
+    return grid, words
+
 
 def getGridList():
     gridList = []
@@ -527,7 +332,7 @@ def getClueList():
 
 
 #start = time.time()
-#grid, words = getCrossword(6,7)
+#grid, words = getCrossword(12,12)
 #end = time.time()
 #logging.info("AJAKULU: {}".format(end - start))
 

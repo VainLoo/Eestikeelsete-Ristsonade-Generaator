@@ -30,6 +30,10 @@ function App() {
   });
 
   useEffect(() => {
+    document.title = "Eestikeelsete Ristsõnade Generaator"
+  }, [])
+
+  useEffect(() => {
     if (response) {
       if (response === 'failed') {
         console.log("Failed to fetch crossword");

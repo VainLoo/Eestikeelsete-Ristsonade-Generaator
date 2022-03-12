@@ -51,7 +51,46 @@ ShortFormIdent = [
     "kolmetäheline akronüüm, mis võib tähendada:",
     "akronüüm, mis võib tähendada mitut asja:",
     "akronüüm, mis võib tähendada üht järgmistest asutustest või organisatsioonidest:",
-    
+    "võib tähendada järgmist:",
+    "mitmetähenduslik sõna, mis võib tähendada:",
+    "teadusdistsipliinides rakendatav kontseptsioon ja võib tähendada:",
+    "mitmetähenduslik sõna. See võib tähendada:",
+    "tähtlühend, mis võib tähendada:",
+    "võib tähendada järgmist:",
+    "mitmetähenduslik sõna.",
+    "mitmetähenduslik sõna, vt",
+    "mitmetähenduslik sõna:",
+    "mitmetähenduslik sõna",
+    "mitmetähenduslik sõna. Selle all võidakse mõelda",
+    "mitmetähenduslik.",
+    "mitmetähenduslik",
+    "mitmetähenduslik:",
+    "mitmetähenduslik sõna, mis võib tähendada:",
+    "itmetähenduslik mõiste:",
+    "itmetähenduslik mõiste",
+    "itmetähenduslik mõiste.",
+    "mitmetähenduslik sõna, mis võib viidata järgnevale:",
+    "mitmetähenduslik termin.",
+    "mitmetähenduslik termin:",
+    "mitmetähenduslik termin.",
+    "eesti keeles mitmetähenduslik sõna",
+    "eesti keeles mitmetähenduslik sõna.",
+    "eesti keeles mitmetähenduslik sõna:",
+    "mitmetähenduslik sõna, mida kasutatakse järgmistes tähendustes:",
+    "mitmetähenduslik sõna ja mitme koha nimi.",
+    "mitmetähenduslik sõna. Selle all võidakse mõelda",
+    "mitmetähenduslik mõiste:",
+    "kokkutulek') on mitmetähenduslik sõna",
+    "mitmetähenduslik sõna. See võib tähendada:",
+    "mitmetähenduslik sõna, mis võib tähendada",
+    "mitmetähendusega sõna:",
+    "mitme tähendusega lühend:",
+    "mitme fraasi suurtähtlühend.",
+    "mitme fraasi suurtähtlühend:",
+    "mitme fraasi suurtähtlühend",
+    "nimi, mis võib tähistada mitut asja:",
+    "sõna, mis võib tähistada:",
+    ":"
 ]
 
 
@@ -208,7 +247,7 @@ def generateWordnetInflections():
                                         'def': 'Sõna {} käändes mitmuse {}'.format(lemma, row['case']),
                                     })
 
-#data = FilterData()
+data = FilterData()
 #cleanWikiData(data)
 #generateWordnetInflections()
 #getWordnetData()
