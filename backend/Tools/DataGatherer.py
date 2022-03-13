@@ -234,26 +234,29 @@ def synthesize_all(word):
 def generateWordnetInflections():
     wn = Wordnet()
     logging.info("Getting wordnet data")
-    with jsonlines.open('backend/Tools/Data/wordnetInflections.jl', mode='a') as writer:
+    with jsonlines.open('backend/Tools/Data/testInflections.jl', mode='a') as writer:
         for i, synset in enumerate(wn):
             if synset.definition != None:
                 for lemma in synset.lemmas:
                     inflections_df = synthesize_all(lemma)
                     for index, row in inflections_df.iterrows():
                         if row['singular']:
-                            writer.write({
-                                        'name': row['singular'],
-                                        'def': 'Sõna {} käändes anisuse {}'.format(lemma, row['case']),
-                                    })
+                            for r in row['singular'].split(", "):
+                                writer.write({
+                                            'name': r,
+                                            'def': 'Sõna {} käändes anisuse {}'.format(lemma, row['case']),
+                                        })
                         if row['plural']:
-                            writer.write({
-                                        'name': row['plural'],
-                                        'def': 'Sõna {} käändes mitmuse {}'.format(lemma, row['case']),
-                                    })
+                            for r in row['plural'].split(", "):
+                                writer.write({
+                                            'name': r,
+                                            'def': 'Sõna {} käändes mitmuse {}'.format(lemma, row['case']),
+                                        })
 
-data = FilterData()
+#data = FilterData()
 #cleanWikiData(data)
 #generateWordnetInflections()
 #getWordnetData()
 #print(data)
 #data = getData()
+#generateWordnetInflections()
