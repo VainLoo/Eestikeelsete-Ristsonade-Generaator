@@ -279,13 +279,15 @@ def getCrossword(length, width):
         logging.info("Grid generated")
         words = makeWords(length, width)
         logging.info("Words generated")
-        if checkWords(words): break
-    
-    logging.info("Word length checked")
-    recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True)
-    logging.info("Crossword filled")
-    checkWordsFilled(words)
-    logging.info("Words fill checked")
+        if checkWords(words): 
+            logging.info("Word length checked")
+            if recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True): 
+                break
+        logging.info("recursionFill failed")
+            
+    #logging.info("Crossword filled")
+    #checkWordsFilled(words)
+    #logging.info("Words fill checked")
     return grid, words
 
 

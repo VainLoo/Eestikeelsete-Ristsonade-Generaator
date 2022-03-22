@@ -41,7 +41,7 @@ def home():
         return response_object, 202
 
 
-
+#Not used anymore
 @main_blueprint.route("/jobs/<job_id>", methods=["GET"])
 def get_status(job_id):
     job = queue.fetch_job(job_id)
@@ -63,7 +63,7 @@ def get_status(job_id):
     response_object.headers.add('Access-Control-Allow-Origin', '*')
     return response_object, status_code
 
-
+#Check if enough jobs are in the system.
 def CheckPremade():
     effectiveJobsCount = queue.finished_job_registry.count + queue.started_job_registry.count + len(queue.get_job_ids())
 
