@@ -1,2 +1,2 @@
-# Eestikeelsete-Ristsonade-Genereerija
+# Eestikeelsete-Ristsonade-Generaator
 Bakalaureusetöö repositoorium
