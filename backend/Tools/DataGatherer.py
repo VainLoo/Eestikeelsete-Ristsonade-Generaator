@@ -91,13 +91,14 @@ ShortFormIdent = [
     "mitme fraasi suurtähtlühend",
     "nimi, mis võib tähistada mitut asja:",
     "sõna, mis võib tähistada:",
-    ":"
+    ":",
+    "aga ka muid tähendusi."
 ]
 
 
 def FilterData():
     # Loeme sisse
-    data = pd.read_json('backend/Tools/Data/results.jl', lines=True)
+    data = pd.read_json('backend/Tools/Data/wordnetInflections.jl', lines=True)
     # Kaotame definitsioonide duplikaadid
     data.drop_duplicates(inplace=True)
     # Kõik suureks
@@ -124,7 +125,7 @@ def FilterData():
 
     data.reset_index(drop=True, inplace=True)
 
-    data.to_csv('backend/Tools/finalData.csv', index=False)
+    data.to_csv('backend/Tools/finalInflections.csv', index=False)
     #print(data)
 
     return data
@@ -244,7 +245,7 @@ def generateWordnetInflections():
                             for r in row['singular'].split(", "):
                                 writer.write({
                                             'name': r,
-                                            'def': 'Sõna {} käändes anisuse {}'.format(lemma, row['case']),
+                                            'def': 'Sõna {} käändes ainsuse {}'.format(lemma, row['case']),
                                         })
                         if row['plural']:
                             for r in row['plural'].split(", "):
@@ -253,7 +254,7 @@ def generateWordnetInflections():
                                             'def': 'Sõna {} käändes mitmuse {}'.format(lemma, row['case']),
                                         })
 
-#data = FilterData()
+data = FilterData()
 #cleanWikiData(data)
 #generateWordnetInflections()
 #getWordnetData()

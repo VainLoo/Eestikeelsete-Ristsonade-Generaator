@@ -1,5 +1,5 @@
 from weakref import ref
-from server.main.GridGenerator import CellInfo, createGrid, printGrid
+from server.main.GridGenerator import CellInfo, createGrid, checkWhiteJointed
 from server.main.DataGatherer import getData
 import logging
 
@@ -12,10 +12,11 @@ anyChar = '[A-ZÜÖÄÕŠŽ ]|'
 grid = None
 words = None
 allWords = []
-data = None
+mainData = None
+fillerData = None
 
 logging.info("Getting data")
-data = getData()
+mainData, fillerData = getData()
 logging.info("Data fetched")
 
 class Word:
@@ -128,7 +129,10 @@ def isValidWord(result, comparison):
 
 def getNewWord(searchParams: str):
     # print("Got params:",searchParams)
-    return data[data['name'].str.match(searchParams) == True]
+    res = mainData[mainData['name'].str.match(searchParams) == True]
+    if len(res) <= 0:
+        res = fillerData[fillerData['name'].str.match(searchParams) == True]
+    return res
 
 
 def setWord(retrivedPair, word: Word):
@@ -150,7 +154,7 @@ def setWord(retrivedPair, word: Word):
 
 def removeWord(word: Word):
     word.clue = ""
-    allWords.remove(word.word)
+    if allWords.__contains__(word.word): allWords.remove(word.word)
     word.word = ""
     leng = len(word.ref)
     for l in range(leng):
@@ -276,14 +280,18 @@ def getCrossword(length, width):
 
     while True:
         grid = createGrid(length, width)
-        logging.info("Grid generated")
-        words = makeWords(length, width)
-        logging.info("Words generated")
-        if checkWords(words): 
-            logging.info("Word length checked")
-            if recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True): 
-                break
-        logging.info("recursionFill failed")
+        if checkWhiteJointed(grid):
+            logging.info("Grid generated")
+            words = makeWords(length, width)
+            logging.info("Words generated")
+            if checkWords(words): 
+                logging.info("Word length checked")
+                if recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True): 
+                    #if checkWordsFilled(words):
+                    break
+            logging.info("recursionFill failed")
+        else:
+            logging.info("Disjointed white squares")
             
     #logging.info("Crossword filled")
     #checkWordsFilled(words)
@@ -305,10 +313,13 @@ def checkWords(words: Words):
 def checkWordsFilled(words: Words):
     for key, aw in words.across.items():
         if len(aw.word) <= 0:
-            raise Exception("Not every word filled")
+            logging.info("Words not filled")
+            return False
     for key, dw in words.down.items():
         if len(dw.word) <= 0:
-            raise Exception("Not every word filled")
+            logging.info("Words not filled")
+            return False
+    return True
 
 def getGridList():
     gridList = []

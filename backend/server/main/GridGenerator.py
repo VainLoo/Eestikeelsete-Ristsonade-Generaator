@@ -1,10 +1,12 @@
+import logging
+from multiprocessing.dummy import Array
 import numpy as np
 import random
 import math
 
 blackSqCount = 0
 letterCount = 0
-
+visited = []
 
 class CellInfo:
     contents = ""
@@ -122,11 +124,11 @@ def processDisjointedWordsDown(rowCount: int, colCount: int, grid):
                     else:
                         checking = False
 
-                    if (not a or a.contents == "#") and (not b or b.contents == "#"):
+                    if (not a or a == False or a.contents == "#") and (not b or b == False or b.contents == "#"):
                         disconnected += 1
-                        if a:
+                        if a != None and a != False:
                             blackSquareArr.append(a)
-                        if b:
+                        if b != None and b != False:
                             blackSquareArr.append(b)
 
                 if disconnected == count and count > 1:
@@ -170,11 +172,11 @@ def processDisjointedWordsAcross(rowCount: int, colCount: int, grid):
                     else:
                         checking = False
 
-                    if (not a or a.contents == "#") and (not b or b.contents == "#"):
+                    if (not a or a == False or a.contents == "#") and (not b or b == False or b.contents == "#"):
                         disconnected += 1
-                        if a:
+                        if a != None and a != False:
                             blackSquareArr.append(a)
-                        if b:
+                        if b != None and b != False:
                             blackSquareArr.append(b)
 
                 if disconnected == count and count > 1:
@@ -184,6 +186,45 @@ def processDisjointedWordsAcross(rowCount: int, colCount: int, grid):
                 j += count
             else:
                 continue
+
+
+def checkWhiteJointed(grid: Array):
+    whiteCount: int = 0
+    global visited
+    visited = []
+    curCell: CellInfo = None
+
+    #Get total white count
+    for row in grid:
+        for cell in row:
+            if cell.contents != "#":
+                whiteCount += 1
+                if curCell == None:
+                    curCell = cell
+                
+    #print("White count: {}".format(whiteCount))
+    #Get connected white count
+    found = recCheckWhiteCount(curCell, 0)
+    #print("Found count: {}".format(found))
+    return whiteCount == found
+    
+
+def recCheckWhiteCount(curCell: CellInfo, foundCellsCount: int):
+    if curCell.above != None and type(curCell.above) != bool and curCell.above.contents != "#" and not visited.__contains__(curCell.above):
+        visited.append(curCell.above)
+        foundCellsCount = recCheckWhiteCount(curCell.above, foundCellsCount+1)
+    if curCell.next != None and type(curCell.next) != bool and curCell.next.contents != "#" and not visited.__contains__(curCell.next):
+        visited.append(curCell.next)
+        foundCellsCount = recCheckWhiteCount(curCell.next, foundCellsCount+1)
+    if curCell.below != None and type(curCell.below) != bool and curCell.below.contents != "#" and not visited.__contains__(curCell.below):
+        visited.append(curCell.below)
+        foundCellsCount = recCheckWhiteCount(curCell.below, foundCellsCount+1)
+    if curCell.prev != None and type(curCell.prev) != bool and curCell.prev.contents != "#" and not visited.__contains__(curCell.prev):
+        visited.append(curCell.prev)
+        foundCellsCount = recCheckWhiteCount(curCell.prev, foundCellsCount+1)
+    return foundCellsCount
+    
+
 
 # Reduce large blocks of white spaces
 def reduceLargeWhiteSquares(length, width, grid):
@@ -269,14 +310,16 @@ def createGrid(length, width):
 
     preventBlockedWhiteSquares(grid)
     #printGrid(grid, "Prevent Blocked White Squares")
+    
     processDisjointedWordsAcross(length, width, grid)
     processDisjointedWordsDown(length, width, grid)
     #printGrid(grid, "Process Disjointed Words")
 
     eliminateTwoLetterWords(grid)
     #printGrid(grid, "Reeliminate two letter words")
+    
 
     return grid
 
-#g = createGrid(7,6)
+#g = createGrid(10,10)
 #printGrid(g)
