@@ -127,7 +127,7 @@ def isValidWord(result, comparison):
     return (len(result) != 0) and (result not in allWords) and (len(result) == len(comparison.ref))
 
 
-def getNewWord(searchParams: str):
+def getNewWordsDf(searchParams: str):
     # print("Got params:",searchParams)
     res = mainData[mainData['name'].str.match(searchParams) == True]
     if len(res) <= 0:
@@ -181,21 +181,27 @@ def chooseWord(word: Word, retrivedWordList):
     return True, retrivedWordList
 
 
+def getNewWordList(index: int, queryParamsList: list[str], word: Word):
+    queryParamsList[index] = word.ref[index]
+    queryParams = ''.join(map(str, queryParamsList))
+    queryParams = '^' + queryParams + '$'
+    return getNewWordsDf(queryParams)
+
 def recursionFill(word: Word, isAcross: bool):
 
     leng = len(word.ref)
-    queryParams = ((anyChar * leng)[:-1]).split('|')
+    queryParamsList = ((anyChar * leng)[:-1]).split('|')
 
     word.backtrack.clear()
     for j in range(leng):
         if word.ref[j].contents != "":
             word.backtrack.append(j)
-            queryParams[j] = word.ref[j].contents
+            queryParamsList[j] = word.ref[j].contents
 
-    queryParams = ''.join(map(str, queryParams))
+    queryParams = ''.join(map(str, queryParamsList))
     queryParams = '^' + queryParams + '$'
 
-    retrivedWordList = getNewWord(queryParams)
+    retrivedWordList = getNewWordsDf(queryParams)
     retrivedWord: str = ""
 
     # print(retrivedWordList)
@@ -238,6 +244,7 @@ def recursionFill(word: Word, isAcross: bool):
                             if not gotWord: return False 
                         else:
                             word.backtrack.append(indx)
+                            getNewWordList(indx, queryParamsList, word)
                             break
     else:
         for indx, cell in enumerate(word.ref):
@@ -257,7 +264,8 @@ def recursionFill(word: Word, isAcross: bool):
                             #printGrid(grid)
                             if not gotWord: return False
                         else:           
-                            word.backtrack.append(indx)  
+                            word.backtrack.append(indx)
+                            getNewWordList(indx, queryParamsList, word)
                             break
     return True
 
@@ -287,26 +295,23 @@ def getCrossword(length, width):
             if checkWords(words): 
                 logging.info("Word length checked")
                 if recursionFill(word=words.across[list(words.across.keys())[0]], isAcross=True): 
-                    #if checkWordsFilled(words):
                     break
+            else:
+                logging.info("Too short word detected")
+
             logging.info("recursionFill failed")
         else:
             logging.info("Disjointed white squares")
             
-    #logging.info("Crossword filled")
-    #checkWordsFilled(words)
-    #logging.info("Words fill checked")
     return grid, words
 
 
 def checkWords(words: Words):
     for key, aw in words.across.items():
         if len(aw.ref) <= 2:
-            logging.info("Too short word")
             return False
     for key, dw in words.down.items():
         if len(dw.ref) <= 2:
-            logging.info("Too short word")
             return False
     return True
 

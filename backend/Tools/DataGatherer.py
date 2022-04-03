@@ -92,13 +92,19 @@ ShortFormIdent = [
     "nimi, mis võib tähistada mitut asja:",
     "sõna, mis võib tähistada:",
     ":",
-    "aga ka muid tähendusi."
+    "aga ka muid tähendusi.",
+    "mitu tähendust.",
+    "mitu tähendust:",
+    "mitu tähendust",
+    "valdkonniti mitu tähendust.",
+    "eesti keeles mitu tähendust:",
+
 ]
 
 
 def FilterData():
     # Loeme sisse
-    data = pd.read_json('backend/Tools/Data/wordnetInflections.jl', lines=True)
+    data = pd.read_json('backend/Tools/Data/results.jl', lines=True)
     # Kaotame definitsioonide duplikaadid
     data.drop_duplicates(inplace=True)
     # Kõik suureks
@@ -125,7 +131,7 @@ def FilterData():
 
     data.reset_index(drop=True, inplace=True)
 
-    data.to_csv('backend/Tools/finalInflections.csv', index=False)
+    data.to_csv('backend/Tools/finalData.csv', index=False)
     #print(data)
 
     return data
