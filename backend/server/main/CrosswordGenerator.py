@@ -244,7 +244,7 @@ def recursionFill(word: Word, isAcross: bool):
                             if not gotWord: return False 
                         else:
                             word.backtrack.append(indx)
-                            getNewWordList(indx, queryParamsList, word)
+                            retrivedWordList = getNewWordList(indx, queryParamsList, word)
                             break
     else:
         for indx, cell in enumerate(word.ref):
@@ -265,7 +265,7 @@ def recursionFill(word: Word, isAcross: bool):
                             if not gotWord: return False
                         else:           
                             word.backtrack.append(indx)
-                            getNewWordList(indx, queryParamsList, word)
+                            retrivedWordList = getNewWordList(indx, queryParamsList, word)
                             break
     return True
 
