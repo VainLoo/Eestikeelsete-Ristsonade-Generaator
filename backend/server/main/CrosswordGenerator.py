@@ -182,7 +182,7 @@ def chooseWord(word: Word, retrivedWordList):
 
 
 def getNewWordList(index: int, queryParamsList: list[str], word: Word):
-    queryParamsList[index] = word.ref[index]
+    queryParamsList[index] = word.ref[index].contents
     queryParams = ''.join(map(str, queryParamsList))
     queryParams = '^' + queryParams + '$'
     return getNewWordsDf(queryParams)
